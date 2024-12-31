@@ -35,20 +35,19 @@ header h1 {
 /* Main Layout */
 .main-layout {
   display: flex;
-  flex-direction: row;
   width: 100%;
   margin: 20px 0;
   gap: 10px;
 }
 
-/* Info Area (1/4) */
+/* Info Area (1/5) */
 .info-area {
-  width: 25%;
+  width: 20%; /* 1/5 de la pantalla */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 20px;
+  padding: 10px;
   gap: 15px;
   background-color: #e8e8e8;
   border-right: 2px solid #ccc;
@@ -59,13 +58,13 @@ header h1 {
 }
 
 .deck-image {
-  width: 80px;
+  width: 70px; /* Ajuste para pantallas pequeñas */
   height: auto;
   margin-bottom: 10px;
 }
 
 .deck-info {
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .turn-area {
@@ -82,7 +81,7 @@ header h1 {
 }
 
 .controls button {
-  padding: 8px 15px;
+  padding: 8px 12px;
   font-size: 0.9rem;
   background-color: #007bff;
   color: #fff;
@@ -101,15 +100,14 @@ header h1 {
   cursor: not-allowed;
 }
 
-/* Play Area (3/4) */
+/* Play Area (4/5) */
 .play-area {
-  width: 75%;
+  width: 80%; /* 4/5 de la pantalla */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 20px;
-  background-color: #fff;
+  padding: 10px;
 }
 
 .section {
@@ -134,8 +132,8 @@ header h1 {
 
 /* Cartas */
 .card {
-  width: 60px; /* Reducido */
-  height: 90px; /* Reducido */
+  width: 50px; /* Ajuste para pantallas pequeñas */
+  height: 75px; /* Ajuste para pantallas pequeñas */
   background-size: cover;
   background-position: center;
   border: 1px solid #ddd;
@@ -199,7 +197,7 @@ footer {
 .game-log {
   font-size: 0.8rem;
   line-height: 1.4;
-  height: 150px; /* Reducido */
+  height: 120px; /* Ajuste */
   overflow-y: auto;
   border: 1px solid #ddd;
   padding: 10px;
@@ -225,11 +223,11 @@ footer {
   }
 
   .card {
-    width: 50px;
-    height: 75px;
+    width: 40px;
+    height: 60px;
   }
 
   .game-log {
-    height: 120px;
+    height: 100px;
   }
 }
