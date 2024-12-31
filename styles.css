@@ -44,10 +44,31 @@ main {
   width: 25%;
   padding: 20px;
   border-right: 2px solid #ddd;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 }
 
-.info-area h2 {
+.deck-area {
+  text-align: center;
+}
+
+.deck-image {
+  width: 100px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.deck-info {
+  font-size: 1.2rem;
+}
+
+.game-log-area {
+  width: 100%;
+}
+
+.game-log-area h2 {
   font-size: 1.2rem;
   margin-bottom: 10px;
 }
@@ -87,7 +108,11 @@ main {
   margin-bottom: 20px;
 }
 
-/* Mano del Jugador */
+.player-hand-area {
+  width: 100%;
+  text-align: center;
+}
+
 .player-hand {
   display: flex;
   justify-content: center;
@@ -111,7 +136,6 @@ main {
   overflow: hidden;
 }
 
-/* Título y Descripción de las Cartas */
 .card .card-title {
   width: 100%;
   text-align: center;
@@ -135,4 +159,45 @@ main {
   position: absolute;
   bottom: 25px;
   line-height: 1.1;
+}
+
+/* Turn Indicator */
+.turn-indicator {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.turn-indicator p {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.controls button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.controls button:hover {
+  background-color: #0056b3;
+}
+
+.controls button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
