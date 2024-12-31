@@ -230,15 +230,18 @@ function passTurn() {
     return;
   }
 
+  // Finalizar el turno del jugador
   cardDrawnThisTurn = false;
   playerTurn = false;
-
   updateTurnIndicator();
   passTurnButton.style.display = "none";
 
+  // Esperar un momento antes de que la máquina actúe
   setTimeout(machineTurn, 1000);
 }
 
+
+// Turno de la máquina
 // Turno de la máquina
 function machineTurn() {
   if (deck.length === 0) {
@@ -246,27 +249,36 @@ function machineTurn() {
     return;
   }
 
+  // Robar una carta
   const card = deck.pop();
-  opponentHand.push(card);
-  renderOpponentHand();
   updateDeckCount();
 
+  // Si la carta es un impostor, activarlo automáticamente
   if (card.type === "impostor") {
     alert(`La máquina ha activado un impostor: ${card.name}`);
     activeCards.push(card);
     renderActiveCards();
     applyImpostorEffect(card);
-  } else if (card.type === "evento") {
+  } 
+  // Si es un evento, activarlo automáticamente
+  else if (card.type === "evento") {
     alert(`La máquina ha activado un evento: ${card.name}`);
     handleEventEffect(card);
+  } 
+  // Si es una carta de tripulante, guardarla en la mano de la máquina
+  else if (card.type === "tripulante") {
+    opponentHand.push(card);
+    renderOpponentHand();
+    alert(`La máquina ha guardado la carta: ${card.name}`);
   }
 
+  // Finalizar el turno de la máquina
   playerTurn = true;
   updateTurnIndicator();
   passTurnButton.style.display = "none";
-
   checkWinCondition();
 }
+
 
 // Verificar condiciones de victoria o derrota
 function checkWinCondition() {
