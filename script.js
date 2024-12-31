@@ -84,15 +84,24 @@ function renderOpponentHand() {
 }
 
 // Renderizar la zona de juego
+// Renderizar la zona de juego
 function renderActiveCards() {
   activeCardsElem.innerHTML = "";
   activeCards.forEach((card) => {
     const cardElem = document.createElement("div");
-    cardElem.classList.add("card", card.type);
-    cardElem.textContent = card.name;
+    cardElem.classList.add("card");
+    cardElem.style.backgroundImage = `url('cartas/${card.name.toLowerCase().replace(/\s+/g, '-')}.png')`;
+
+    // Añadir título en la parte inferior
+    const cardTitle = document.createElement("div");
+    cardTitle.classList.add("card-title");
+    cardTitle.textContent = card.name;
+
+    cardElem.appendChild(cardTitle);
     activeCardsElem.appendChild(cardElem);
   });
 }
+
 
 // Robar una carta (Jugador)
 function drawCard() {
