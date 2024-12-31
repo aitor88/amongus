@@ -186,29 +186,12 @@ function drawCard() {
 
 // Aplicar el efecto de un impostor
 function applyImpostorEffect(card) {
-  switch (card.sabotage) {
-    case "disable-next-turn":
-      LogAction("Sabotaje: No podrás jugar en tu próximo turno.");
-      break;
-
-    case "lose-card":
-      if (playerHand.length > 0) {
-        const lostCard = playerHand.pop();
-        LogAction(`Sabotaje: Has perdido la carta ${lostCard.name} de tu mano.`);
-        renderPlayerHand();
-      } else {
-        LogAction("Sabotaje: No tienes cartas para perder.");
-      }
-      break;
-
-    case "double-sabotage":
-      LogAction("Sabotaje: ¡Dos sabotajes se activan simultáneamente!");
-      activeCards.push({ name: "Sabotaje Adicional" }, { name: "Sabotaje Adicional" });
-      renderActiveCards();
-      break;
-
-    default:
-      LogAction("Sabotaje desconocido.");
+  if (card.sabotage === "disable-next-turn") {
+    logAction("Sabotaje: El jugador pierde su próximo turno.");
+    playerTurn = false; // El jugador pierde su turno
+    setTimeout(machineTurn, 1000); // La máquina juega de nuevo después de 1 segundo
+  } else {
+    logAction(`El efecto del impostor: ${card.name}`);
   }
 }
 
@@ -345,26 +328,11 @@ function machineTurn() {
 
 // Verificar condiciones de victoria o derrota
 function checkWinCondition() {
-  const sabotageLimit = 3;
-  const activeSabotages = activeCards.filter((card) => card.type === "impostor").length;
-
-  if (activeSabotages >= sabotageLimit) {
-    LogAction("¡La máquina gana! Demasiados sabotajes activos.");
-    resetGame();
-    return;
+  if (deck.length === 0 && playerHand.length === 0) {
+    logAction("El mazo y la mano del jugador están vacíos. Fin del juego.");
+    return true; // El juego termina
   }
-
-  if (playerHand.length === 0 && deck.length === 0) {
-    LogAction("¡La máquina gana! No tienes cartas y no puedes robar.");
-    resetGame();
-    return;
-  }
-
-  if (deck.length === 0 && activeSabotages === 0) {
-    LogAction("¡Felicidades! Has ganado resolviendo todos los sabotajes.");
-    resetGame();
-    return;
-  }
+  return false; // Continúa el juego
 }
 
 // Reiniciar el juego
