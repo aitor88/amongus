@@ -1,23 +1,11 @@
-// Baraja inicial de cartas (20 cartas)
+// Baraja inicial de cartas simplificada
 const deck = [
   { type: "tripulante", name: "Detective", effect: "reveal" },
-  { type: "tripulante", name: "Detective", effect: "reveal" },
-  { type: "tripulante", name: "Ingeniero", effect: "repair" },
-  { type: "tripulante", name: "Ingeniero", effect: "repair" },
   { type: "tripulante", name: "Ingeniero", effect: "repair" },
   { type: "tripulante", name: "Explorador", effect: "draw" },
-  { type: "tripulante", name: "Explorador", effect: "draw" },
-  { type: "tripulante", name: "Guardián", effect: "defense" },
-  { type: "tripulante", name: "Guardián", effect: "defense" },
   { type: "impostor", name: "Impostor 1", sabotage: "disable-next-turn" },
-  { type: "impostor", name: "Impostor 2", sabotage: "disable-next-turn" },
-  { type: "impostor", name: "Impostor 3", sabotage: "lose-card" },
-  { type: "impostor", name: "Impostor 4", sabotage: "lose-card" },
-  { type: "impostor", name: "Impostor 5", sabotage: "double-sabotage" },
-  { type: "impostor", name: "Impostor 6", sabotage: "double-sabotage" },
+  { type: "impostor", name: "Impostor 2", sabotage: "lose-card" },
   { type: "evento", name: "Reparación global", effect: "remove-sabotage" },
-  { type: "evento", name: "Reparación global", effect: "remove-sabotage" },
-  { type: "evento", name: "Sabotaje Mayor", effect: "lose-hand" },
   { type: "evento", name: "Sabotaje Mayor", effect: "lose-hand" },
 ];
 
@@ -60,7 +48,7 @@ function updateTurnIndicator() {
 function logAction(message) {
   const logEntry = document.createElement("div");
   logEntry.textContent = message;
-  gameLog.prepend(logEntry); // Añade al inicio
+  gameLog.prepend(logEntry);
 }
 
 // Renderizar la mano del jugador
@@ -69,37 +57,10 @@ function renderPlayerHand() {
   playerHand.forEach((card, index) => {
     const cardElem = document.createElement("div");
     cardElem.classList.add("card");
-    cardElem.style.backgroundImage = `url('cartas/${card.name.toLowerCase().replace(/\s+/g, '-')}.png')`;
-    const cardTitle = document.createElement("div");
-    cardTitle.classList.add("card-title");
-    cardTitle.textContent = card.name;
-    const cardDescription = document.createElement("div");
-    cardDescription.classList.add("card-description");
-    cardDescription.textContent = getCardDescription(card);
-    cardElem.appendChild(cardTitle);
-    cardElem.appendChild(cardDescription);
+    cardElem.textContent = card.name;
     cardElem.addEventListener("click", () => playCard(index));
     playerHandElem.appendChild(cardElem);
   });
-}
-
-// Obtener la descripción de una carta
-function getCardDescription(card) {
-  const descriptions = {
-    "Detective": "Revela una carta del mazo.",
-    "Ingeniero": "Repara un sabotaje.",
-    "Explorador": "Roba 2 cartas.",
-    "Guardián": "Bloquea un sabotaje.",
-    "Impostor 1": "Desactiva el próximo turno.",
-    "Impostor 2": "Desactiva el próximo turno.",
-    "Impostor 3": "Pierdes 1 carta.",
-    "Impostor 4": "Pierdes 1 carta.",
-    "Impostor 5": "Activa 2 sabotajes.",
-    "Impostor 6": "Activa 2 sabotajes.",
-    "Reparación global": "Elimina todos los sabotajes.",
-    "Sabotaje Mayor": "Pierdes tu mano completa.",
-  };
-  return descriptions[card.name] || "Sin descripción.";
 }
 
 // Renderizar la mano del oponente
@@ -113,21 +74,6 @@ function renderOpponentHand() {
   });
 }
 
-// Renderizar la zona de juego
-function renderActiveCards() {
-  activeCardsElem.innerHTML = "";
-  activeCards.forEach((card) => {
-    const cardElem = document.createElement("div");
-    cardElem.classList.add("card");
-    cardElem.style.backgroundImage = `url('cartas/${card.name.toLowerCase().replace(/\s+/g, '-')}.png')`;
-    const cardTitle = document.createElement("div");
-    cardTitle.classList.add("card-title");
-    cardTitle.textContent = card.name;
-    cardElem.appendChild(cardTitle);
-    activeCardsElem.appendChild(cardElem);
-  });
-}
-
 // Robar una carta
 function drawCard() {
   if (!playerTurn || cardDrawnThisTurn) return;
@@ -136,18 +82,12 @@ function drawCard() {
     return;
   }
   const card = deck.pop();
-  if (card.type === "impostor") {
-    logAction("¡Impostor detectado! Un sabotaje ha sido activado.");
-    activeCards.push(card);
-    renderActiveCards();
-    applyImpostorEffect(card);
-  } else {
-    playerHand.push(card);
-    renderPlayerHand();
-  }
-  cardDrawnThisTurn = true;
+  playerHand.push(card);
+  renderPlayerHand();
   updateDeckCount();
+  cardDrawnThisTurn = true;
   passTurnButton.style.display = "inline-block";
+  logAction(`Has robado una carta: ${card.name}`);
 }
 
 // Pasar turno
@@ -157,65 +97,46 @@ function passTurn() {
     return;
   }
   logAction("Has pasado el turno.");
-  nextTurn();
-}
-
-// Función centralizada para alternar turnos
-function nextTurn() {
-  playerTurn = !playerTurn;
+  cardDrawnThisTurn = false;
+  playerTurn = false;
   updateTurnIndicator();
-  if (playerTurn) {
-    logAction("Es el turno del jugador.");
-    cardDrawnThisTurn = false;
-  } else {
-    logAction("Es el turno de la máquina.");
-    setTimeout(machineTurn, 1000);
-  }
+  setTimeout(machineTurn, 1000);
 }
 
 // Turno de la máquina
 function machineTurn() {
+  logAction("Es el turno de la máquina.");
   if (deck.length === 0) {
     logAction("El mazo está vacío. Fin del juego.");
     return;
   }
-
   const card = deck.pop();
-  updateDeckCount();
-
+  opponentHand.push(card);
+  renderOpponentHand();
+  logAction("La máquina ha robado una carta.");
   if (card.type === "impostor") {
-    logAction("La máquina activó un sabotaje.");
-    activeCards.push(card);
-    renderActiveCards();
     applyImpostorEffect(card);
   } else if (card.type === "evento") {
-    logAction("La máquina activó un evento.");
     handleEventEffect(card);
-  } else {
-    logAction("La máquina guardó una carta.");
-    opponentHand.push(card);
-    renderOpponentHand();
   }
-
-  if (!checkWinCondition()) nextTurn();
+  playerTurn = true;
+  updateTurnIndicator();
 }
 
 // Aplicar el efecto de un impostor
 function applyImpostorEffect(card) {
   if (card.sabotage === "disable-next-turn") {
-    logAction("Sabotaje: El siguiente turno del jugador está desactivado.");
+    logAction("Sabotaje: Pierdes tu próximo turno.");
     playerTurn = false;
     setTimeout(machineTurn, 1000);
   } else if (card.sabotage === "lose-card") {
     if (playerHand.length > 0) {
       playerHand.pop();
-      logAction("Sabotaje: Has perdido una carta.");
       renderPlayerHand();
+      logAction("Sabotaje: Has perdido una carta.");
+    } else {
+      logAction("Sabotaje: No tienes cartas para perder.");
     }
-  } else if (card.sabotage === "double-sabotage") {
-    logAction("Sabotaje: ¡Dos sabotajes se han activado!");
-    activeCards.push({ name: "Sabotaje Adicional" }, { name: "Sabotaje Adicional" });
-    renderActiveCards();
   }
 }
 
@@ -223,8 +144,7 @@ function applyImpostorEffect(card) {
 function handleEventEffect(card) {
   if (card.effect === "remove-sabotage") {
     logAction("Evento: Todos los sabotajes han sido eliminados.");
-    activeCards = activeCards.filter((c) => c.type !== "impostor");
-    renderActiveCards();
+    activeCards = [];
   } else if (card.effect === "lose-hand") {
     logAction("Evento: ¡Has perdido todas tus cartas!");
     playerHand = [];
@@ -232,17 +152,49 @@ function handleEventEffect(card) {
   }
 }
 
-// Verificar condiciones de victoria
-function checkWinCondition() {
-  if (deck.length === 0 && playerHand.length === 0) {
-    logAction("El mazo y la mano del jugador están vacíos. Fin del juego.");
-    return true;
+// Jugar una carta
+function playCard(index) {
+  if (!playerTurn) {
+    logAction("No puedes jugar cartas en el turno de la máquina.");
+    return;
   }
-  if (deck.length === 0 && opponentHand.length === 0) {
-    logAction("El mazo y la mano del oponente están vacíos. Fin del juego.");
-    return true;
+  const playedCard = playerHand.splice(index, 1)[0];
+  logAction(`Has jugado la carta: ${playedCard.name}`);
+  renderPlayerHand();
+  if (playedCard.type === "tripulante") {
+    logAction(`Efecto activado: ${playedCard.effect}`);
+    handleTripulanteEffect(playedCard);
+  } else if (playedCard.type === "evento") {
+    handleEventEffect(playedCard);
   }
-  return false;
+  cardDrawnThisTurn = false;
+  passTurnButton.style.display = "none";
+  playerTurn = false;
+  updateTurnIndicator();
+  setTimeout(machineTurn, 1000);
+}
+
+// Efectos de cartas de tripulante
+function handleTripulanteEffect(card) {
+  if (card.effect === "reveal") {
+    if (deck.length > 0) {
+      const revealedCard = deck.pop();
+      logAction(`Detective: Has revelado la carta ${revealedCard.name}`);
+      playerHand.push(revealedCard);
+      renderPlayerHand();
+      updateDeckCount();
+    } else {
+      logAction("No hay más cartas para revelar.");
+    }
+  } else if (card.effect === "repair") {
+    logAction("Ingeniero: Has reparado un sabotaje.");
+  } else if (card.effect === "draw") {
+    logAction("Explorador: Robas dos cartas.");
+    if (deck.length > 0) playerHand.push(deck.pop());
+    if (deck.length > 0) playerHand.push(deck.pop());
+    renderPlayerHand();
+    updateDeckCount();
+  }
 }
 
 // Inicializar el juego
@@ -250,7 +202,6 @@ function initializeGame() {
   shuffleDeck();
   renderPlayerHand();
   renderOpponentHand();
-  renderActiveCards();
   updateDeckCount();
   updateTurnIndicator();
 }
