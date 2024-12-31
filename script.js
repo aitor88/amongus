@@ -60,6 +60,15 @@ function updateTurnIndicator() {
   turnIndicator.textContent = `Turno: ${playerTurn ? "Jugador" : "Máquina"}`;
 }
 
+function logAction(message) {
+  const gameLog = document.getElementById("game-log");
+  const logEntry = document.createElement("div");
+  logEntry.textContent = message;
+  gameLog.appendChild(logEntry);
+  gameLog.scrollTop = gameLog.scrollHeight; // Mantener el scroll abajo
+}
+
+// Renderizar la mano del jugador
 // Renderizar la mano del jugador
 // Renderizar la mano del jugador
 function renderPlayerHand() {
@@ -71,18 +80,44 @@ function renderPlayerHand() {
     cardElem.classList.add("card");
     cardElem.style.backgroundImage = `url('cartas/${card.name.toLowerCase().replace(/\s+/g, '-')}.png')`;
 
-    // Añadir título en la parte inferior
+    // Añadir título
     const cardTitle = document.createElement("div");
     cardTitle.classList.add("card-title");
     cardTitle.textContent = card.name;
 
+    // Añadir descripción
+    const cardDescription = document.createElement("div");
+    cardDescription.classList.add("card-description");
+    cardDescription.textContent = getCardDescription(card);
+
     cardElem.appendChild(cardTitle);
+    cardElem.appendChild(cardDescription);
 
     // Añadir evento para jugar la carta
     cardElem.addEventListener("click", () => playCard(index));
 
     playerHandElem.appendChild(cardElem);
   });
+}
+
+// Obtener descripción de la carta
+function getCardDescription(card) {
+  const descriptions = {
+    "Detective": "Revela una carta del mazo.",
+    "Ingeniero": "Repara un sabotaje.",
+    "Explorador": "Roba 2 cartas.",
+    "Guardián": "Bloquea un sabotaje.",
+    "Impostor 1": "Desactiva el próximo turno.",
+    "Impostor 2": "Desactiva el próximo turno.",
+    "Impostor 3": "Pierdes 1 carta.",
+    "Impostor 4": "Pierdes 1 carta.",
+    "Impostor 5": "Activa 2 sabotajes.",
+    "Impostor 6": "Activa 2 sabotajes.",
+    "Reparación global": "Elimina todos los sabotajes.",
+    "Sabotaje Mayor": "Pierdes tu mano completa."
+  };
+
+  return descriptions[card.name] || "Sin descripción.";
 }
 
 // Renderizar la mano del oponente
