@@ -122,6 +122,7 @@ main {
   align-items: center;
   height: 120px;
   padding: 5px;
+  flex-wrap: wrap;
 }
 
 /* Cartas */
@@ -176,6 +177,10 @@ footer {
   color: #fff;
   padding: 20px 0;
   text-align: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
 }
 
 .game-log-area {
@@ -198,4 +203,25 @@ footer {
   background-color: #f9f9f9;
   border-radius: 8px;
   color: #333;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+  .deck-image {
+    width: 80px;
+  }
+
+  .controls button {
+    font-size: 0.9rem;
+    padding: 8px 15px;
+  }
+
+  .card {
+    width: 70px;
+    height: 100px;
+  }
+
+  .game-log {
+    height: 150px;
+  }
 }
