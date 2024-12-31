@@ -8,7 +8,7 @@ const deck = [
 
 // Estado inicial del juego
 let playerHand = [];
-let opponentHand = []; // La máquina comienza sin cartas
+let opponentHand = [];
 let activeCards = [];
 let playerTurn = true;
 let cardDrawnThisTurn = false;
@@ -79,12 +79,10 @@ function machineTurn() {
     return;
   }
 
-  // La máquina roba una carta
   const card = deck.pop();
   opponentHand.push(card);
   renderOpponentHand();
 
-  // La máquina pasa el turno al jugador
   playerTurn = true;
   updateTurnIndicator();
 }
