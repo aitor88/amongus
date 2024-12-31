@@ -1,10 +1,32 @@
 // Baraja inicial de cartas (20 cartas)
 const deck = [
+  // Tripulantes
+  { type: "tripulante", name: "Detective", effect: "reveal" },
+  { type: "tripulante", name: "Detective", effect: "reveal" },
   { type: "tripulante", name: "Detective", effect: "reveal" },
   { type: "tripulante", name: "Ingeniero", effect: "repair" },
-  { type: "impostor", name: "Impostor", sabotage: "disable-next-turn" },
+  { type: "tripulante", name: "Ingeniero", effect: "repair" },
+  { type: "tripulante", name: "Ingeniero", effect: "repair" },
+  { type: "tripulante", name: "Explorador", effect: "draw" },
+  { type: "tripulante", name: "Explorador", effect: "draw" },
+  { type: "tripulante", name: "Guardián", effect: "defense" },
+  { type: "tripulante", name: "Guardián", effect: "defense" },
+
+  // Impostores
+  { type: "impostor", name: "Impostor 1", sabotage: "disable-next-turn" },
+  { type: "impostor", name: "Impostor 2", sabotage: "disable-next-turn" },
+  { type: "impostor", name: "Impostor 3", sabotage: "lose-card" },
+  { type: "impostor", name: "Impostor 4", sabotage: "lose-card" },
+  { type: "impostor", name: "Impostor 5", sabotage: "double-sabotage" },
+  { type: "impostor", name: "Impostor 6", sabotage: "double-sabotage" },
+
+  // Eventos
+  { type: "evento", name: "Reparación global", effect: "remove-sabotage" },
+  { type: "evento", name: "Reparación global", effect: "remove-sabotage" },
+  { type: "evento", name: "Sabotaje Mayor", effect: "lose-hand" },
   { type: "evento", name: "Sabotaje Mayor", effect: "lose-hand" },
 ];
+
 
 // Estado inicial del juego
 let playerHand = [];
@@ -105,4 +127,9 @@ function initializeGame() {
   renderOpponentHand();
   updateTurnIndicator();
 }
+
+function updateDeckCount() {
+  document.getElementById("deck-count").textContent = deck.length;
+}
+
 initializeGame();
