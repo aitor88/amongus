@@ -15,28 +15,25 @@
 
     <!-- Zona principal -->
     <main>
-      <!-- Zona de 1/4 -->
-      <div class="deck-area">
-        <img src="deck.png" alt="Mazo de cartas" class="deck-image">
-        <div class="deck-info">
-          <p>Mazo: <span id="deck-count">20</span> cartas</p>
-        </div>
+      <!-- Zona de 1/4: Información de Jugadas -->
+      <div class="info-area">
+        <h2>Lo que sucede</h2>
+        <div id="game-log" class="game-log"></div>
       </div>
 
       <!-- Zona de 3/4 -->
       <div class="play-area">
+        <!-- Cartas de la mesa -->
         <div id="active-cards" class="active-cards"></div>
+
+        <!-- Mano del jugador -->
+        <div id="player-hand" class="player-hand"></div>
       </div>
     </main>
 
     <!-- Indicador de Turno -->
     <div class="turn-indicator">
       <p id="turn-indicator">Turno: Jugador</p>
-    </div>
-
-    <div class="player-hand-area">
-      <h2>Tu Mano</h2>
-      <div id="player-hand" class="player-hand"></div>
     </div>
 
     <!-- Controles del Jugador -->
