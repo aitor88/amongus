@@ -1,223 +1,173 @@
-/* General estilos para el cuerpo */
-body {
-  font-family: Arial, sans-serif;
+/* General Reset */
+body, html {
   margin: 0;
   padding: 0;
-  background-color: #f4f4f4;
-  color: #333;
+  font-family: 'Arial', sans-serif;
+  background-color: #121212;
+  color: #fff;
+}
+
+/* Container principal */
+.game-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  min-height: 100vh;
+  justify-content: space-between;
+  height: 100vh;
+  max-width: 100%;
 }
 
-.container {
+/* Sección superior */
+.top-section {
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* Header */
-header {
   text-align: center;
-  background-color: #ffcc00;
-  padding: 20px;
-}
-
-header h1 {
-  margin: 0;
-  font-size: 2rem;
-  color: #333;
-}
-
-/* Main Layout */
-.main-layout {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  margin: 20px 0;
-  gap: 10px;
-}
-
-/* Info Area (1/5 de la pantalla) */
-.info-area {
-  width: 20%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
   padding: 10px;
-  gap: 15px;
-  background-color: #e8e8e8;
-  border-right: 2px solid #ccc;
+  background-color: #222;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-.deck-area {
-  text-align: center;
+.game-title {
+  margin: 0;
+  font-size: 24px;
+  color: #ff3d00; /* Rojo Among Us */
+}
+
+.turn-info {
+  margin-top: 5px;
+  font-size: 18px;
+  color: #a1a1a1;
+}
+
+/* Sección central */
+.main-section {
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  flex-grow: 1;
+  padding: 10px;
+}
+
+.deck-section {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.deck {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .deck-image {
-  width: 60px;
+  width: 100px;
   height: auto;
+  margin: 10px 0;
+}
+
+.game-board {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.active-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  min-height: 150px;
+  background-color: #333;
+  border-radius: 10px;
+  padding: 10px;
   margin-bottom: 10px;
 }
 
-.deck-info {
-  font-size: 1rem;
+.active-cards .card {
+  margin: 5px;
+  width: 70px;
+  height: 100px;
+  background-color: #ffcc00; /* Amarillo Among Us */
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  font-size: 14px;
 }
 
-.turn-area {
+.game-log {
+  width: 100%;
+  height: 100px;
+  overflow-y: auto;
+  background-color: #1a1a1a;
+  color: #a1a1a1;
+  font-size: 14px;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Sección inferior */
+.bottom-section {
+  width: 100%;
   text-align: center;
-  font-size: 1.2rem;
-  font-weight: bold;
+  padding: 10px;
+}
+
+.player-hand {
+  width: 90%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.player-hand h2 {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 5px;
+  color: #fff;
+}
+
+.player-hand .card {
+  width: 70px;
+  height: 100px;
+  margin: 5px;
+  background-color: #2196f3; /* Azul Among Us */
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #fff;
 }
 
 .controls {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
   gap: 10px;
 }
 
-.controls button {
-  padding: 10px 15px;
-  font-size: 1rem;
-  background-color: #007bff;
-  color: white;
+.action-button {
+  background-color: #00e676; /* Verde Among Us */
   border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #fff;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s ease;
 }
 
-.controls button:hover {
-  background-color: #0056b3;
+.action-button:hover {
+  background-color: #00c853;
 }
 
-/* Play Area (4/5 de la pantalla) */
-.play-area {
-  width: 80%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 10px;
-  gap: 15px;
-}
-
-.section {
-  margin-bottom: 15px;
-  width: 100%;
-  text-align: center;
-}
-
-.active-cards,
-.player-hand {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  align-items: center;
-  padding: 5px;
-  background-color: #f9f9f9;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  min-height: 150px;
-}
-
-/* Estilo de las cartas */
-.card {
-  width: 90px; /* Tamaño cuadrado */
-  height: 90px; /* Tamaño cuadrado */
-  background-size: cover;
-  background-position: center;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-  box-sizing: border-box;
-  padding: 5px;
-}
-
-.card-title {
-  font-size: 0.8rem;
-  font-weight: bold;
-  text-align: center;
-  color: white;
-  background-color: rgba(0, 0, 0, 0.6);
-  width: 100%;
-  padding: 2px;
-  position: absolute;
-  top: 0;
-}
-
-.card-description {
-  font-size: 0.7rem;
-  text-align: center;
-  color: black;
-  background-color: rgba(255, 255, 255, 0.8);
-  width: 100%;
-  padding: 2px;
-  position: absolute;
-  bottom: 0;
-}
-
-/* Lo que sucede */
-.game-log-area {
-  width: 100%;
-  margin-top: 10px;
-}
-
-.game-log-area h2 {
-  font-size: 1rem;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-.game-log {
-  font-size: 0.9rem;
-  line-height: 1.4;
-  height: 120px;
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  padding: 10px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  color: #333;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .main-layout {
-    flex-direction: column;
-  }
-
-  .info-area {
-    width: 100%;
-    border-right: none;
-    border-bottom: 2px solid #ccc;
-  }
-
-  .play-area {
-    width: 100%;
-  }
-
-  .card {
-    width: 70px; /* Reducir tamaño para pantallas pequeñas */
-    height: 70px;
-  }
-
-  .active-cards,
-  .player-hand {
-    min-height: 100px;
-  }
-
-  .game-log {
-    height: 100px; /* Ajuste menor para pantallas pequeñas */
-  }
+.action-button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
 }
