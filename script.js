@@ -1,215 +1,154 @@
-// Baraja inicial de cartas (20 cartas)
-const deck = [
-  { type: "tripulante", name: "Detective", effect: "add-points", points: 2 },
-  { type: "tripulante", name: "Detective", effect: "add-points", points: 2 },
-  { type: "tripulante", name: "Ingeniero", effect: "add-points", points: 3 },
-  { type: "tripulante", name: "Ingeniero", effect: "add-points", points: 3 },
-  { type: "tripulante", name: "Explorador", effect: "add-points", points: 1 },
-  { type: "tripulante", name: "Explorador", effect: "add-points", points: 1 },
-  { type: "impostor", name: "Impostor", effect: "steal-points", points: -3 },
-  { type: "impostor", name: "Impostor", effect: "steal-points", points: -3 },
-  { type: "evento", name: "Reclamar Mesa", effect: "claim-points" },
-  { type: "evento", name: "Reclamar Mesa", effect: "claim-points" },
-];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salta y Brilla</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
 
-// Estado inicial del juego
-let playerHand = [];
-let opponentHand = [];
-let tablePoints = 0;
-let playerPoints = 0;
-let opponentPoints = 0;
-let playerTurn = true;
+        canvas {
+            display: block;
+            background: linear-gradient(to bottom, #000428, #004e92);
+        }
 
-// Referencias al DOM
-const turnIndicator = document.getElementById("turn-indicator");
-const playerHandElem = document.getElementById("player-hand");
-const opponentHandElem = document.getElementById("opponent-hand");
-const drawCardButton = document.getElementById("draw-card");
-const passTurnButton = document.getElementById("pass-turn");
-const deckCountElem = document.getElementById("deck-count");
-const gameLog = document.getElementById("game-log");
-const playerPointsElem = document.getElementById("player-points");
-const opponentPointsElem = document.getElementById("opponent-points");
-const tablePointsElem = document.getElementById("table-points");
+        .score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="score">Score: <span id="score">0</span></div>
+    <canvas id="gameCanvas"></canvas>
 
-// Mezclar el mazo inicial
-function shuffleDeck() {
-  for (let i = deck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [deck[i], deck[j]] = [deck[j], deck[i]];
-  }
-}
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
 
-// Actualizar el contador del mazo
-function updateDeckCount() {
-  deckCountElem.textContent = deck.length;
-}
+        // Set canvas dimensions
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-// Actualizar puntos
-function updatePoints() {
-  playerPointsElem.textContent = `Puntos del jugador: ${playerPoints}`;
-  opponentPointsElem.textContent = `Puntos de la máquina: ${opponentPoints}`;
-  tablePointsElem.textContent = `Puntos en la mesa: ${tablePoints}`;
-}
+        const gravity = 0.5;
+        const jumpStrength = -10;
+        const platformWidth = 100;
+        const platformHeight = 10;
+        let score = 0;
 
-// Actualizar indicador de turno
-function updateTurnIndicator() {
-  turnIndicator.textContent = playerTurn ? "Turno: Jugador" : "Turno: Máquina";
-}
+        const player = {
+            x: canvas.width / 2 - 15,
+            y: canvas.height - 50,
+            width: 30,
+            height: 30,
+            color: "yellow",
+            dx: 0,
+            dy: 0,
+        };
 
-// Registrar acciones en "Lo que sucede"
-function logAction(message) {
-  const logEntry = document.createElement("div");
-  logEntry.textContent = message;
-  gameLog.prepend(logEntry);
-}
+        const platforms = [];
 
-// Renderizar la mano del jugador
-function renderPlayerHand() {
-  playerHandElem.innerHTML = "";
-  playerHand.forEach((card, index) => {
-    const cardElem = document.createElement("div");
-    cardElem.classList.add("card");
-    cardElem.textContent = `${card.name} (${card.points || "Evento"})`;
-    cardElem.addEventListener("click", () => playCard(index));
-    playerHandElem.appendChild(cardElem);
-  });
-}
+        function createPlatform(x, y) {
+            return { x, y, width: platformWidth, height: platformHeight, color: "white" };
+        }
 
-// Renderizar la mano del oponente
-function renderOpponentHand() {
-  opponentHandElem.innerHTML = "";
-  opponentHand.forEach(() => {
-    const cardElem = document.createElement("div");
-    cardElem.classList.add("card", "hidden");
-    cardElem.textContent = "🂠";
-    opponentHandElem.appendChild(cardElem);
-  });
-}
+        function initPlatforms() {
+            for (let i = 0; i < 5; i++) {
+                platforms.push(createPlatform(
+                    Math.random() * (canvas.width - platformWidth),
+                    canvas.height - i * 150
+                ));
+            }
+        }
 
-// Robar una carta
-function drawCard(hand) {
-  if (deck.length === 0) {
-    logAction("El mazo está vacío.");
-    return;
-  }
-  const card = deck.pop();
-  hand.push(card);
-  updateDeckCount();
-}
+        function drawPlayer() {
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+        }
 
-// Jugar una carta
-function playCard(index) {
-  if (!playerTurn) {
-    logAction("No puedes jugar cartas en el turno de la máquina.");
-    return;
-  }
+        function drawPlatforms() {
+            platforms.forEach(platform => {
+                ctx.fillStyle = platform.color;
+                ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+            });
+        }
 
-  const playedCard = playerHand.splice(index, 1)[0];
-  logAction(`Has jugado la carta ${playedCard.name}.`);
+        function updatePlayer() {
+            player.dy += gravity;
+            player.y += player.dy;
+            player.x += player.dx;
 
-  if (playedCard.effect === "add-points") {
-    tablePoints += playedCard.points;
-    logAction(`Añadiste ${playedCard.points} puntos a la mesa.`);
-  } else if (playedCard.effect === "claim-points") {
-    playerPoints += tablePoints;
-    logAction(`Reclamaste ${tablePoints} puntos de la mesa.`);
-    tablePoints = 0;
-  } else if (playedCard.effect === "steal-points") {
-    const stolenPoints = Math.min(opponentPoints, Math.abs(playedCard.points));
-    opponentPoints -= stolenPoints;
-    logAction(`El impostor robó ${stolenPoints} puntos de la máquina.`);
-  }
+            // Prevent player from going off-screen
+            if (player.x < 0) player.x = 0;
+            if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
 
-  drawCard(playerHand); // Roba una carta después de jugar
-  renderPlayerHand();
-  updatePoints();
-  checkWinCondition();
-  nextTurn();
-}
+            // Check collision with platforms
+            platforms.forEach(platform => {
+                if (
+                    player.dy > 0 &&
+                    player.x + player.width > platform.x &&
+                    player.x < platform.x + platform.width &&
+                    player.y + player.height > platform.y &&
+                    player.y + player.height < platform.y + platform.height
+                ) {
+                    player.dy = jumpStrength;
+                    score++;
+                    document.getElementById("score").innerText = score;
+                }
+            });
 
-// Pasar turno
-function passTurn() {
-  if (!playerTurn) {
-    logAction("No puedes pasar el turno en este momento.");
-    return;
-  }
-  logAction("Has pasado el turno.");
-  nextTurn();
-}
+            // Reset if the player falls off the screen
+            if (player.y > canvas.height) {
+                alert("Game Over! Your score: " + score);
+                document.location.reload();
+            }
+        }
 
-// Función centralizada para alternar turnos
-function nextTurn() {
-  playerTurn = !playerTurn;
-  updateTurnIndicator();
-  if (!playerTurn) {
-    setTimeout(machineTurn, 1000);
-  }
-}
+        function updatePlatforms() {
+            platforms.forEach(platform => {
+                platform.y += 2; // Move platforms down
 
-// Turno de la máquina
-function machineTurn() {
-  if (deck.length === 0) {
-    logAction("El mazo está vacío. Fin del juego.");
-    return;
-  }
+                // Recycle platforms that move off-screen
+                if (platform.y > canvas.height) {
+                    platform.x = Math.random() * (canvas.width - platformWidth);
+                    platform.y = 0;
+                }
+            });
+        }
 
-  const card = opponentHand.pop();
-  logAction("La máquina jugó una carta.");
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawPlayer();
+            drawPlatforms();
+            updatePlayer();
+            updatePlatforms();
+            requestAnimationFrame(gameLoop);
+        }
 
-  if (card.effect === "add-points") {
-    tablePoints += card.points;
-    logAction(`La máquina añadió ${card.points} puntos a la mesa.`);
-  } else if (card.effect === "claim-points") {
-    opponentPoints += tablePoints;
-    logAction(`La máquina reclamó ${tablePoints} puntos de la mesa.`);
-    tablePoints = 0;
-  } else if (card.effect === "steal-points") {
-    const stolenPoints = Math.min(playerPoints, Math.abs(card.points));
-    playerPoints -= stolenPoints;
-    logAction(`El impostor robó ${stolenPoints} puntos del jugador.`);
-  }
+        // Touch controls
+        canvas.addEventListener("touchstart", e => {
+            const touchX = e.touches[0].clientX;
+            if (touchX < canvas.width / 2) {
+                player.dx = -5; // Move left
+            } else {
+                player.dx = 5; // Move right
+            }
+        });
 
-  drawCard(opponentHand); // La máquina roba una carta después de jugar
-  updatePoints();
-  checkWinCondition();
-  nextTurn();
-}
+        canvas.addEventListener("touchend", () => {
+            player.dx = 0; // Stop movement
+        });
 
-// Verificar condiciones de victoria
-function checkWinCondition() {
-  if (playerPoints >= 10) {
-    logAction("¡Ganaste! Llegaste a 10 puntos.");
-    disableGame();
-  } else if (opponentPoints >= 10) {
-    logAction("La máquina ganó. Llegó a 10 puntos.");
-    disableGame();
-  }
-}
-
-// Deshabilitar el juego
-function disableGame() {
-  drawCardButton.disabled = true;
-  passTurnButton.disabled = true;
-}
-
-// Inicializar el juego
-function initializeGame() {
-  shuffleDeck();
-  for (let i = 0; i < 3; i++) {
-    drawCard(playerHand);
-    drawCard(opponentHand);
-  }
-  renderPlayerHand();
-  renderOpponentHand();
-  updateDeckCount();
-  updateTurnIndicator();
-  updatePoints();
-}
-
-// Eventos
-drawCardButton.addEventListener("click", () => drawCard(playerHand));
-passTurnButton.addEventListener("click", passTurn);
-
-// Iniciar juego
-initializeGame();
+        // Initialize game
+        initPlatforms();
+        gameLoop();
+    </script>
+</body>
+</html>
