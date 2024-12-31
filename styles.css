@@ -80,9 +80,8 @@ main {
   overflow-y: auto;
   border: 1px solid #ddd;
   padding: 10px;
-  background-color: #f9f9f9;
+  background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* Play Area (3/4) */
@@ -95,36 +94,24 @@ main {
   padding: 20px;
 }
 
-.active-cards {
+.active-cards,
+.player-hand {
   display: flex;
-  gap: 15px;
+  gap: 10px;
   justify-content: center;
   align-items: center;
-  height: 200px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 10px;
-  overflow-y: auto;
-  margin-bottom: 20px;
-}
-
-.player-hand-area {
-  width: 100%;
-  text-align: center;
+  height: 120px; /* Altura ajustada */
+  padding: 5px;
 }
 
 .player-hand {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  flex-wrap: wrap;
+  margin-top: 15px;
 }
 
 /* Cartas */
 .card {
-  width: 100px;
-  height: 140px;
+  width: 80px; /* Ancho ajustado */
+  height: 110px; /* Altura ajustada */
   background-size: cover;
   background-position: center;
   border: 1px solid #ddd;
@@ -140,7 +127,7 @@ main {
 .card .card-title {
   width: 100%;
   text-align: center;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
   padding: 5px;
@@ -152,13 +139,13 @@ main {
 .card .card-description {
   width: 100%;
   text-align: center;
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   background-color: rgba(255, 255, 255, 0.8);
   color: black;
   padding: 2px;
   box-sizing: border-box;
   position: absolute;
-  bottom: 25px;
+  bottom: 20px;
   line-height: 1.1;
 }
 
