@@ -73,7 +73,6 @@ function logAction(message) {
 
 // Renderizar la mano del jugador
 // Renderizar la mano del jugador
-// Renderizar la mano del jugador
 function renderPlayerHand() {
   const playerHandElem = document.getElementById("player-hand");
   playerHandElem.innerHTML = ""; // Limpiar el contenido actual
@@ -83,12 +82,12 @@ function renderPlayerHand() {
     cardElem.classList.add("card");
     cardElem.style.backgroundImage = `url('cartas/${card.name.toLowerCase().replace(/\s+/g, '-')}.png')`;
 
-    // Añadir título
+    // Añadir título en la parte superior
     const cardTitle = document.createElement("div");
     cardTitle.classList.add("card-title");
     cardTitle.textContent = card.name;
 
-    // Añadir descripción
+    // Añadir descripción en la parte inferior
     const cardDescription = document.createElement("div");
     cardDescription.classList.add("card-description");
     cardDescription.textContent = getCardDescription(card);
