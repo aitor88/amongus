@@ -5,18 +5,17 @@ const deck = [
   { type: "tripulante", name: "Ingeniero", effect: "add-points", points: 3 },
   { type: "tripulante", name: "Ingeniero", effect: "add-points", points: 3 },
   { type: "tripulante", name: "Explorador", effect: "add-points", points: 1 },
-  { type: "tripulante", name: "Explorador", effect: "draw-extra", points: 1 },
-  { type: "tripulante", name: "Guardián", effect: "block-sabotage", points: 0 },
-  { type: "tripulante", name: "Guardián", effect: "block-sabotage", points: 0 },
-  { type: "impostor", name: "Impostor", effect: "remove-points", points: -3 },
-  { type: "impostor", name: "Impostor", effect: "remove-points", points: -3 },
-  { type: "evento", name: "Reparación global", effect: "recover-points", points: 3 },
-  { type: "evento", name: "Sabotaje mayor", effect: "remove-points", points: -2 },
+  { type: "tripulante", name: "Explorador", effect: "add-points", points: 1 },
+  { type: "impostor", name: "Impostor", effect: "steal-points", points: -3 },
+  { type: "impostor", name: "Impostor", effect: "steal-points", points: -3 },
+  { type: "evento", name: "Reclamar Mesa", effect: "claim-points" },
+  { type: "evento", name: "Reclamar Mesa", effect: "claim-points" },
 ];
 
 // Estado inicial del juego
 let playerHand = [];
 let opponentHand = [];
+let tablePoints = 0;
 let playerPoints = 0;
 let opponentPoints = 0;
 let playerTurn = true;
@@ -32,6 +31,7 @@ const deckCountElem = document.getElementById("deck-count");
 const gameLog = document.getElementById("game-log");
 const playerPointsElem = document.getElementById("player-points");
 const opponentPointsElem = document.getElementById("opponent-points");
+const tablePointsElem = document.getElementById("table-points");
 
 // Mezclar el mazo inicial
 function shuffleDeck() {
@@ -50,6 +50,7 @@ function updateDeckCount() {
 function updatePoints() {
   playerPointsElem.textContent = `Puntos del jugador: ${playerPoints}`;
   opponentPointsElem.textContent = `Puntos de la máquina: ${opponentPoints}`;
+  tablePointsElem.textContent = `Puntos en la mesa: ${tablePoints}`;
 }
 
 // Actualizar indicador de turno
@@ -70,7 +71,7 @@ function renderPlayerHand() {
   playerHand.forEach((card, index) => {
     const cardElem = document.createElement("div");
     cardElem.classList.add("card");
-    cardElem.textContent = `${card.name} (${card.points})`;
+    cardElem.textContent = `${card.name} (${card.points || "Evento"})`;
     cardElem.addEventListener("click", () => playCard(index));
     playerHandElem.appendChild(cardElem);
   });
@@ -112,46 +113,23 @@ function playCard(index) {
   const playedCard = playerHand.splice(index, 1)[0];
   logAction(`Has jugado la carta ${playedCard.name}.`);
 
-  applyCardEffect(playedCard, true);
+  if (playedCard.effect === "add-points") {
+    tablePoints += playedCard.points;
+    logAction(`Añadiste ${playedCard.points} puntos a la mesa.`);
+  } else if (playedCard.effect === "claim-points") {
+    playerPoints += tablePoints;
+    logAction(`Reclamaste ${tablePoints} puntos de la mesa.`);
+    tablePoints = 0;
+  } else if (playedCard.effect === "steal-points") {
+    const stolenPoints = Math.min(tablePoints, Math.abs(playedCard.points));
+    opponentPoints = Math.max(opponentPoints - stolenPoints, 0);
+    logAction(`El impostor robó ${stolenPoints} puntos de la máquina.`);
+  }
 
   renderPlayerHand();
   updatePoints();
   checkWinCondition();
   nextTurn();
-}
-
-// Aplicar efecto de una carta
-function applyCardEffect(card, isPlayer) {
-  if (card.effect === "add-points") {
-    if (isPlayer) {
-      playerPoints += card.points;
-      logAction(`Ganaste ${card.points} puntos.`);
-    } else {
-      opponentPoints += card.points;
-      logAction(`La máquina ganó ${card.points} puntos.`);
-    }
-  } else if (card.effect === "remove-points") {
-    if (isPlayer) {
-      playerPoints += card.points;
-      logAction(`Perdiste ${Math.abs(card.points)} puntos.`);
-    } else {
-      opponentPoints += card.points;
-      logAction(`La máquina perdió ${Math.abs(card.points)} puntos.`);
-    }
-  } else if (card.effect === "recover-points") {
-    if (isPlayer) {
-      playerPoints += card.points;
-      logAction("Recuperaste puntos perdidos.");
-    } else {
-      opponentPoints += card.points;
-      logAction("La máquina recuperó puntos perdidos.");
-    }
-  } else if (card.effect === "draw-extra" && isPlayer) {
-    logAction("Robaste una carta extra.");
-    if (deck.length > 0) playerHand.push(deck.pop());
-    renderPlayerHand();
-    updateDeckCount();
-  }
 }
 
 // Pasar turno
@@ -188,7 +166,19 @@ function machineTurn() {
 
   const playedCard = opponentHand.pop();
   logAction("La máquina jugó una carta.");
-  applyCardEffect(playedCard, false);
+
+  if (playedCard.effect === "add-points") {
+    tablePoints += playedCard.points;
+    logAction(`La máquina añadió ${playedCard.points} puntos a la mesa.`);
+  } else if (playedCard.effect === "claim-points") {
+    opponentPoints += tablePoints;
+    logAction(`La máquina reclamó ${tablePoints} puntos de la mesa.`);
+    tablePoints = 0;
+  } else if (playedCard.effect === "steal-points") {
+    const stolenPoints = Math.min(tablePoints, Math.abs(playedCard.points));
+    playerPoints = Math.max(playerPoints - stolenPoints, 0);
+    logAction(`El impostor robó ${stolenPoints} puntos del jugador.`);
+  }
 
   updatePoints();
   checkWinCondition();
@@ -202,12 +192,6 @@ function checkWinCondition() {
     disableGame();
   } else if (opponentPoints >= 10) {
     logAction("La máquina ganó. Llegó a 10 puntos.");
-    disableGame();
-  } else if (playerPoints <= 0) {
-    logAction("Perdiste. Tus puntos llegaron a 0.");
-    disableGame();
-  } else if (opponentPoints <= 0) {
-    logAction("Ganaste. Los puntos de la máquina llegaron a 0.");
     disableGame();
   }
 }
