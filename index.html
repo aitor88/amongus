@@ -15,7 +15,7 @@
 
     <!-- Zona principal -->
     <main>
-      <!-- Zona de 1/4: Información del mazo y texto de jugadas -->
+      <!-- Zona de 1/4: Mazo y Controles -->
       <div class="info-area">
         <div class="deck-area">
           <img src="deck.png" alt="Mazo de cartas" class="deck-image">
@@ -23,9 +23,10 @@
             <p>Mazo: <span id="deck-count">20</span> cartas</p>
           </div>
         </div>
-        <div class="game-log-area">
-          <h2>Lo que sucede</h2>
-          <div id="game-log" class="game-log"></div>
+        <div class="controls">
+          <p id="turn-indicator">Turno: Jugador</p>
+          <button id="draw-card">Robar Carta</button>
+          <button id="pass-turn" style="display: none;">Pasar</button>
         </div>
       </div>
 
@@ -42,16 +43,13 @@
       </div>
     </main>
 
-    <!-- Indicador de Turno -->
-    <div class="turn-indicator">
-      <p id="turn-indicator">Turno: Jugador</p>
-    </div>
-
-    <!-- Controles del Jugador -->
-    <div class="controls">
-      <button id="draw-card">Robar Carta</button>
-      <button id="pass-turn" style="display: none;">Pasar</button>
-    </div>
+    <!-- Zona inferior: Lo que sucede -->
+    <footer>
+      <div class="game-log-area">
+        <h2>Lo que sucede</h2>
+        <div id="game-log" class="game-log"></div>
+      </div>
+    </footer>
   </div>
 
   <script src="script.js"></script>
