@@ -108,6 +108,7 @@ header h1 {
   align-items: center;
   justify-content: flex-start;
   padding: 10px;
+  gap: 20px;
 }
 
 .section {
@@ -130,6 +131,30 @@ header h1 {
   border-radius: 8px;
 }
 
+/* Lo que sucede */
+.game-log-area {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.game-log-area h2 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.game-log {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  height: 120px; /* Ajuste */
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  color: #333;
+}
+
 /* Cartas */
 .card {
   width: 50px; /* Ajuste para pantallas pequeñas */
@@ -146,64 +171,6 @@ header h1 {
   overflow: hidden;
   padding: 5px;
   box-sizing: border-box;
-}
-
-/* Título de la carta (parte superior) */
-.card .card-title {
-  width: 100%;
-  text-align: center;
-  font-size: 0.6rem;
-  font-weight: bold;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 2px 0;
-  position: absolute;
-  top: 0;
-  box-sizing: border-box;
-}
-
-/* Descripción de la carta (parte inferior) */
-.card .card-description {
-  width: 100%;
-  text-align: center;
-  font-size: 0.5rem;
-  background-color: rgba(255, 255, 255, 0.8);
-  color: black;
-  padding: 2px 0;
-  position: absolute;
-  bottom: 0;
-  box-sizing: border-box;
-}
-
-/* Footer: Game Log */
-footer {
-  width: 100%;
-  background-color: #333;
-  color: #fff;
-  padding: 10px 0;
-  text-align: center;
-}
-
-.game-log-area {
-  width: 90%;
-  margin: 0 auto;
-}
-
-.game-log-area h2 {
-  font-size: 1rem;
-  margin-bottom: 10px;
-}
-
-.game-log {
-  font-size: 0.8rem;
-  line-height: 1.4;
-  height: 120px; /* Ajuste */
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  padding: 10px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  color: #333;
 }
 
 /* Responsiveness */
