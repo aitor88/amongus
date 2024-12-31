@@ -189,9 +189,21 @@ function applyImpostorEffect(card) {
   if (card.sabotage === "disable-next-turn") {
     logAction("Sabotaje: El jugador pierde su próximo turno.");
     playerTurn = false; // El jugador pierde su turno
-    setTimeout(machineTurn, 1000); // La máquina juega de nuevo después de 1 segundo
+    setTimeout(machineTurn, 1000); // La máquina toma otro turno
+  } else if (card.sabotage === "lose-card") {
+    if (playerHand.length > 0) {
+      const lostCard = playerHand.pop();
+      logAction(`Sabotaje: Has perdido la carta ${lostCard.name}.`);
+      renderPlayerHand();
+    } else {
+      logAction("Sabotaje: No tienes cartas para perder.");
+    }
+  } else if (card.sabotage === "double-sabotage") {
+    logAction("Sabotaje: ¡Dos sabotajes se activan simultáneamente!");
+    activeCards.push({ name: "Sabotaje Adicional" }, { name: "Sabotaje Adicional" });
+    renderActiveCards();
   } else {
-    logAction(`El efecto del impostor: ${card.name}`);
+    logAction("Sabotaje desconocido.");
   }
 }
 
@@ -270,13 +282,13 @@ function handleEventEffect(card) {
 // Pasar el turno
 function passTurn() {
   if (!playerTurn) {
-    LogAction("No puedes pasar el turno en este momento.");
+    logAction("No puedes pasar el turno en este momento.");
     return;
   }
 
   // Finalizar el turno del jugador
-  cardDrawnThisTurn = false;
-  playerTurn = false;
+  cardDrawnThisTurn = false; // Permitir que el jugador robe una carta en su próximo turno
+  playerTurn = false; // Cambiar al turno de la máquina
   updateTurnIndicator();
   passTurnButton.style.display = "none";
 
@@ -287,7 +299,7 @@ function passTurn() {
 // Turno de la máquina
 function machineTurn() {
   // Asegurarse de que sea el turno de la máquina
-  if (playerTurn) return; 
+  if (playerTurn) return;
 
   logAction("La máquina está jugando su turno...");
 
@@ -301,7 +313,7 @@ function machineTurn() {
   const card = deck.pop();
   updateDeckCount();
 
-  // Lógica para el tipo de carta robada
+  // Procesar la carta robada
   if (card.type === "impostor") {
     logAction(`La máquina activó un impostor: ${card.name}`);
     activeCards.push(card);
@@ -320,16 +332,22 @@ function machineTurn() {
   if (checkWinCondition()) return;
 
   // Cambiar turno al jugador
-  playerTurn = true; // Cambiar el turno al jugador
+  playerTurn = true;
+  cardDrawnThisTurn = false; // Restablecer la acción de robo
   logAction("Es el turno del jugador.");
   updateTurnIndicator();
-  passTurnButton.style.display = "none";
+  renderPlayerHand(); // Actualizar la mano del jugador
+  passTurnButton.style.display = "none"; // Ocultar botón de pasar
 }
 
 // Verificar condiciones de victoria o derrota
 function checkWinCondition() {
   if (deck.length === 0 && playerHand.length === 0) {
     logAction("El mazo y la mano del jugador están vacíos. Fin del juego.");
+    return true; // El juego termina
+  }
+  if (deck.length === 0 && opponentHand.length === 0) {
+    logAction("El mazo y la mano del oponente están vacíos. Fin del juego.");
     return true; // El juego termina
   }
   return false; // Continúa el juego
