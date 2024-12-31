@@ -1,11 +1,30 @@
-// Baraja inicial de cartas
+// Baraja inicial de cartas (20 cartas)
 const deck = [
+  // Tripulantes
+  { type: "tripulante", name: "Detective", effect: "reveal" },
+  { type: "tripulante", name: "Detective", effect: "reveal" },
   { type: "tripulante", name: "Detective", effect: "reveal" },
   { type: "tripulante", name: "Ingeniero", effect: "repair" },
+  { type: "tripulante", name: "Ingeniero", effect: "repair" },
+  { type: "tripulante", name: "Ingeniero", effect: "repair" },
+  { type: "tripulante", name: "Guardián", effect: "defense" },
+  { type: "tripulante", name: "Guardián", effect: "defense" },
+  { type: "tripulante", name: "Explorador", effect: "draw" },
+  { type: "tripulante", name: "Explorador", effect: "draw" },
+
+  // Impostores
   { type: "impostor", name: "Impostor 1", sabotage: "disable-next-turn" },
-  { type: "impostor", name: "Impostor 2", sabotage: "lose-card" },
-  { type: "evento", name: "Sabotaje: Luces", effect: "sabotage-lights" },
-  { type: "evento", name: "Reparación", effect: "remove-sabotage" },
+  { type: "impostor", name: "Impostor 2", sabotage: "disable-next-turn" },
+  { type: "impostor", name: "Impostor 3", sabotage: "lose-card" },
+  { type: "impostor", name: "Impostor 4", sabotage: "lose-card" },
+  { type: "impostor", name: "Impostor 5", sabotage: "double-sabotage" },
+  { type: "impostor", name: "Impostor 6", sabotage: "double-sabotage" },
+
+  // Eventos
+  { type: "evento", name: "Reparación global", effect: "remove-sabotage" },
+  { type: "evento", name: "Reparación global", effect: "remove-sabotage" },
+  { type: "evento", name: "Sabotaje mayor", effect: "lose-hand" },
+  { type: "evento", name: "Sabotaje mayor", effect: "lose-hand" },
 ];
 
 // Estado inicial del juego
@@ -198,6 +217,12 @@ function activateSabotage(card) {
         alert("No tienes cartas para perder.");
       }
       break;
+    case "double-sabotage":
+      alert("Sabotaje: ¡Se han activado dos sabotajes simultáneamente!");
+      sabotages.push({ name: "Sabotaje adicional" });
+      sabotages.push({ name: "Sabotaje adicional" });
+      renderActiveCards();
+      break;
   }
 }
 
@@ -209,6 +234,10 @@ function handleEventEffect(card) {
     alert("Evento: Todos los sabotajes han sido eliminados.");
     sabotages = [];
     renderActiveCards();
+  } else if (card.effect === "lose-hand") {
+    alert("Evento: ¡Has perdido todas tus cartas!");
+    playerHand = [];
+    renderPlayerHand();
   }
 }
 
@@ -217,8 +246,8 @@ function renderActiveCards() {
   activeCardsElem.innerHTML = "";
   sabotages.forEach((card) => {
     const cardElem = document.createElement("div");
-    cardElem.classList.add("card", card.type);
-    cardElem.textContent = `${card.name} (Sabotaje)`;
+    cardElem.classList.add("card", card.type || "sabotage");
+    cardElem.textContent = `${card.name || "Sabotaje"} (Sabotaje)`;
     activeCardsElem.appendChild(cardElem);
   });
 
@@ -234,7 +263,7 @@ function renderActiveCards() {
 
 // Verificar condiciones de victoria o derrota
 function checkGameOver() {
-  if (discoveredImpostors >= 2) {
+  if (discoveredImpostors >= 6) {
     alert("¡Has ganado! Descubriste a todos los impostores.");
     return;
   }
