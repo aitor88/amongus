@@ -8,7 +8,7 @@ const deck = [
 
 // Estado inicial del juego
 let playerHand = [];
-let opponentHand = Array(5).fill("hidden");
+let opponentHand = []; // La máquina comienza sin cartas
 let activeCards = [];
 let playerTurn = true;
 let cardDrawnThisTurn = false;
@@ -74,9 +74,17 @@ function passTurn() {
 
 // Turno de la máquina
 function machineTurn() {
+  if (deck.length === 0) {
+    alert("El mazo está vacío. Fin del juego.");
+    return;
+  }
+
+  // La máquina roba una carta
   const card = deck.pop();
   opponentHand.push(card);
   renderOpponentHand();
+
+  // La máquina pasa el turno al jugador
   playerTurn = true;
   updateTurnIndicator();
 }
