@@ -44,14 +44,15 @@
         let score = 0;
 
         const player = {
-            x: canvas.width / 2 - 15,
-            y: canvas.height - 50,
-            width: 30,
-            height: 30,
-            color: "yellow",
+            x: canvas.width / 2 - 25,
+            y: canvas.height - 200, // Start higher to avoid immediate Game Over
+            width: 50, // Adjust to match image dimensions
+            height: 50,
             dx: 0,
             dy: 0,
+            image: new Image(),
         };
+        player.image.src = "among.png"; // Load the player image
 
         const platforms = [];
 
@@ -61,16 +62,23 @@
 
         function initPlatforms() {
             for (let i = 0; i < 5; i++) {
-                platforms.push(createPlatform(
+                const platform = createPlatform(
                     Math.random() * (canvas.width - platformWidth),
                     canvas.height - i * 150
-                ));
+                );
+
+                // Ensure a platform is directly below the player initially
+                if (i === 0) {
+                    platform.x = player.x - platformWidth / 2 + player.width / 2;
+                    platform.y = player.y + player.height + 10; // Just below the player
+                }
+
+                platforms.push(platform);
             }
         }
 
         function drawPlayer() {
-            ctx.fillStyle = player.color;
-            ctx.fillRect(player.x, player.y, player.width, player.height);
+            ctx.drawImage(player.image, player.x, player.y, player.width, player.height);
         }
 
         function drawPlatforms() {
