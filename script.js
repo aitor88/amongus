@@ -299,12 +299,10 @@ function passTurn() {
   setTimeout(machineTurn, 1000);
 }
 
-
-// Turno de la máquina
 // Turno de la máquina
 function machineTurn() {
   if (deck.length === 0) {
-    LogAction("El mazo está vacío. Fin del juego.");
+    logAction("El mazo está vacío. Fin del juego.");
     return;
   }
 
@@ -314,21 +312,21 @@ function machineTurn() {
 
   // Si la carta es un impostor, activarlo automáticamente
   if (card.type === "impostor") {
-    LogAction(`La máquina ha activado un impostor: ${card.name}`);
+    logAction(`La máquina ha activado un impostor: ${card.name}`);
     activeCards.push(card);
     renderActiveCards();
     applyImpostorEffect(card);
   } 
   // Si es un evento, activarlo automáticamente
   else if (card.type === "evento") {
-    LogAction(`La máquina ha activado un evento: ${card.name}`);
+    logAction(`La máquina ha activado un evento: ${card.name}`);
     handleEventEffect(card);
   } 
   // Si es una carta de tripulante, guardarla en la mano de la máquina
-  else if (card.type === "tripulante") {
+  else {
+    logAction(`La máquina ha guardado la carta: ${card.name}`);
     opponentHand.push(card);
     renderOpponentHand();
-    LogAction(`La máquina ha guardado la carta: ${card.name}`);
   }
 
   // Finalizar el turno de la máquina
@@ -337,7 +335,6 @@ function machineTurn() {
   passTurnButton.style.display = "none";
   checkWinCondition();
 }
-
 
 // Verificar condiciones de victoria o derrota
 function checkWinCondition() {
