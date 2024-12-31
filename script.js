@@ -158,15 +158,15 @@ function machineTurn() {
   const card = deck.pop();
   updateDeckCount();
   if (card.type === "impostor") {
-    logAction(`La máquina activó un impostor: ${card.name}`);
+    logAction("La máquina ha activado un sabotaje.");
     activeCards.push(card);
     renderActiveCards();
     applyImpostorEffect(card);
   } else if (card.type === "evento") {
-    logAction(`La máquina activó un evento: ${card.name}`);
+    logAction("La máquina ha activado un evento.");
     handleEventEffect(card);
   } else {
-    logAction(`La máquina guardó la carta: ${card.name}`);
+    logAction("La máquina ha guardado una carta.");
     opponentHand.push(card);
     renderOpponentHand();
   }
@@ -182,7 +182,7 @@ function drawCard() {
   }
   const card = deck.pop();
   if (card.type === "impostor") {
-    logAction(`¡Impostor detectado! ${card.name} ha activado un sabotaje.`);
+    logAction("¡Impostor detectado! Un sabotaje ha sido activado.");
     activeCards.push(card);
     renderActiveCards();
     applyImpostorEffect(card);
@@ -208,17 +208,17 @@ function passTurn() {
 // Aplicar el efecto de un impostor
 function applyImpostorEffect(card) {
   if (card.sabotage === "disable-next-turn") {
-    logAction("Sabotaje: El jugador pierde su próximo turno.");
+    logAction("Sabotaje: El siguiente turno del jugador está desactivado.");
     playerTurn = false;
     setTimeout(machineTurn, 1000);
   } else if (card.sabotage === "lose-card") {
     if (playerHand.length > 0) {
-      const lostCard = playerHand.pop();
-      logAction(`Sabotaje: Has perdido la carta ${lostCard.name}.`);
+      playerHand.pop();
+      logAction("Sabotaje: Has perdido una carta.");
       renderPlayerHand();
     }
   } else if (card.sabotage === "double-sabotage") {
-    logAction("Sabotaje: ¡Dos sabotajes se activan simultáneamente!");
+    logAction("Sabotaje: ¡Dos sabotajes se han activado!");
     activeCards.push({ name: "Sabotaje Adicional" }, { name: "Sabotaje Adicional" });
     renderActiveCards();
   }
@@ -234,26 +234,6 @@ function handleEventEffect(card) {
     logAction("Evento: ¡Has perdido todas tus cartas!");
     playerHand = [];
     renderPlayerHand();
-  }
-}
-
-// Aplicar efectos de cartas de tripulantes
-function handleTripulanteEffect(card) {
-  if (card.effect === "reveal" && deck.length > 0) {
-    const revealedCard = deck.pop();
-    logAction(`Detective: Has revelado la carta ${revealedCard.name}`);
-    activeCards.push(revealedCard);
-    renderActiveCards();
-  } else if (card.effect === "repair") {
-    logAction("Ingeniero: Reparación activada. Resuelve un sabotaje.");
-  } else if (card.effect === "draw") {
-    logAction("Explorador: Robas dos cartas adicionales.");
-    if (deck.length > 0) playerHand.push(deck.pop());
-    if (deck.length > 0) playerHand.push(deck.pop());
-    renderPlayerHand();
-    updateDeckCount();
-  } else if (card.effect === "defense") {
-    logAction("Guardián: Bloqueo activado. El próximo sabotaje será bloqueado.");
   }
 }
 
