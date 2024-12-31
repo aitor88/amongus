@@ -19,7 +19,6 @@ let tablePoints = 0;
 let playerPoints = 0;
 let opponentPoints = 0;
 let playerTurn = true;
-let cardDrawnThisTurn = false;
 
 // Referencias al DOM
 const turnIndicator = document.getElementById("turn-indicator");
@@ -89,18 +88,14 @@ function renderOpponentHand() {
 }
 
 // Robar una carta
-function drawCard() {
-  if (!playerTurn || cardDrawnThisTurn) return;
+function drawCard(hand) {
   if (deck.length === 0) {
     logAction("El mazo está vacío.");
     return;
   }
   const card = deck.pop();
-  playerHand.push(card);
-  renderPlayerHand();
-  cardDrawnThisTurn = true;
+  hand.push(card);
   updateDeckCount();
-  passTurnButton.style.display = "inline-block";
 }
 
 // Jugar una carta
@@ -121,11 +116,12 @@ function playCard(index) {
     logAction(`Reclamaste ${tablePoints} puntos de la mesa.`);
     tablePoints = 0;
   } else if (playedCard.effect === "steal-points") {
-    const stolenPoints = Math.min(tablePoints, Math.abs(playedCard.points));
-    opponentPoints = Math.max(opponentPoints - stolenPoints, 0);
+    const stolenPoints = Math.min(opponentPoints, Math.abs(playedCard.points));
+    opponentPoints -= stolenPoints;
     logAction(`El impostor robó ${stolenPoints} puntos de la máquina.`);
   }
 
+  drawCard(playerHand); // Roba una carta después de jugar
   renderPlayerHand();
   updatePoints();
   checkWinCondition();
@@ -148,8 +144,6 @@ function nextTurn() {
   updateTurnIndicator();
   if (!playerTurn) {
     setTimeout(machineTurn, 1000);
-  } else {
-    cardDrawnThisTurn = false;
   }
 }
 
@@ -160,26 +154,23 @@ function machineTurn() {
     return;
   }
 
-  const card = deck.pop();
-  opponentHand.push(card);
-  renderOpponentHand();
-
-  const playedCard = opponentHand.pop();
+  const card = opponentHand.pop();
   logAction("La máquina jugó una carta.");
 
-  if (playedCard.effect === "add-points") {
-    tablePoints += playedCard.points;
-    logAction(`La máquina añadió ${playedCard.points} puntos a la mesa.`);
-  } else if (playedCard.effect === "claim-points") {
+  if (card.effect === "add-points") {
+    tablePoints += card.points;
+    logAction(`La máquina añadió ${card.points} puntos a la mesa.`);
+  } else if (card.effect === "claim-points") {
     opponentPoints += tablePoints;
     logAction(`La máquina reclamó ${tablePoints} puntos de la mesa.`);
     tablePoints = 0;
-  } else if (playedCard.effect === "steal-points") {
-    const stolenPoints = Math.min(tablePoints, Math.abs(playedCard.points));
-    playerPoints = Math.max(playerPoints - stolenPoints, 0);
+  } else if (card.effect === "steal-points") {
+    const stolenPoints = Math.min(playerPoints, Math.abs(card.points));
+    playerPoints -= stolenPoints;
     logAction(`El impostor robó ${stolenPoints} puntos del jugador.`);
   }
 
+  drawCard(opponentHand); // La máquina roba una carta después de jugar
   updatePoints();
   checkWinCondition();
   nextTurn();
@@ -206,8 +197,8 @@ function disableGame() {
 function initializeGame() {
   shuffleDeck();
   for (let i = 0; i < 3; i++) {
-    if (deck.length > 0) playerHand.push(deck.pop());
-    if (deck.length > 0) opponentHand.push(deck.pop());
+    drawCard(playerHand);
+    drawCard(opponentHand);
   }
   renderPlayerHand();
   renderOpponentHand();
@@ -217,7 +208,7 @@ function initializeGame() {
 }
 
 // Eventos
-drawCardButton.addEventListener("click", drawCard);
+drawCardButton.addEventListener("click", () => drawCard(playerHand));
 passTurnButton.addEventListener("click", passTurn);
 
 // Iniciar juego
