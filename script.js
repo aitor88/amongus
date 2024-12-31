@@ -303,28 +303,32 @@ function passTurn() {
 
 // Turno de la máquina
 function machineTurn() {
+  // Asegurarse de que sea el turno de la máquina
+  if (playerTurn) return; 
+
+  logAction("La máquina está jugando su turno...");
+
   // Verificar si el mazo está vacío
   if (deck.length === 0) {
     logAction("El mazo está vacío. Fin del juego.");
     return;
   }
 
-  logAction("La máquina está jugando su turno...");
-
-  // Robar una carta
+  // La máquina roba una carta
   const card = deck.pop();
   updateDeckCount();
 
+  // Lógica para el tipo de carta robada
   if (card.type === "impostor") {
-    logAction(`La máquina ha activado un impostor: ${card.name}`);
+    logAction(`La máquina activó un impostor: ${card.name}`);
     activeCards.push(card);
     renderActiveCards();
     applyImpostorEffect(card);
   } else if (card.type === "evento") {
-    logAction(`La máquina ha activado un evento: ${card.name}`);
+    logAction(`La máquina activó un evento: ${card.name}`);
     handleEventEffect(card);
   } else {
-    logAction(`La máquina ha guardado la carta: ${card.name}`);
+    logAction(`La máquina guardó la carta: ${card.name}`);
     opponentHand.push(card);
     renderOpponentHand();
   }
@@ -333,8 +337,8 @@ function machineTurn() {
   if (checkWinCondition()) return;
 
   // Cambiar turno al jugador
+  playerTurn = true; // Cambiar el turno al jugador
   logAction("Es el turno del jugador.");
-  playerTurn = true;
   updateTurnIndicator();
   passTurnButton.style.display = "none";
 }
