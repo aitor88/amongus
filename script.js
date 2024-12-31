@@ -57,8 +57,10 @@ function updateDeckCount() {
 
 // Actualizar indicador de turno
 function updateTurnIndicator() {
-  turnIndicator.textContent = `Turno: ${playerTurn ? "Jugador" : "Máquina"}`;
+  const turnIndicator = document.getElementById("turn-indicator");
+  turnIndicator.textContent = playerTurn ? "Turno: Jugador" : "Turno: Máquina";
 }
+
 
 // Registrar acciones en la ventana de "Lo que sucede"
 function logAction(message) {
