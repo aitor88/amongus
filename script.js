@@ -41,6 +41,7 @@ const deckCountElem = document.getElementById("deck-count");
 const playerHandElem = document.getElementById("player-hand");
 const activeCardsElem = document.getElementById("active-cards");
 const drawCardButton = document.getElementById("draw-card");
+const passTurnButton = document.getElementById("pass-turn");
 const turnIndicator = document.createElement("div");
 turnIndicator.id = "turn-indicator";
 document.body.appendChild(turnIndicator);
@@ -48,6 +49,16 @@ document.body.appendChild(turnIndicator);
 // Función para actualizar el contador del mazo
 function updateDeckCount() {
   deckCountElem.textContent = deckCount;
+}
+
+// Mostrar el botón "Pasar" después de robar una carta
+function showPassButton() {
+  passTurnButton.style.display = "inline-block";
+}
+
+// Ocultar el botón "Pasar" cuando el turno pasa a la máquina
+function hidePassButton() {
+  passTurnButton.style.display = "none";
 }
 
 // Función para alternar turnos
@@ -63,14 +74,15 @@ function switchTurn() {
   }
 }
 
-// Función para el turno del jugador
-function playerTurnHandler() {
+// Función para pasar el turno
+function passTurn() {
   if (!playerTurn) {
-    alert("Es el turno de la máquina. ¡Espera!");
+    alert("Es el turno de la máquina. ¡No puedes pasar!");
     return;
   }
-  drawCard();
-  checkGameOver();
+  alert("Has pasado el turno.");
+  hidePassButton();
+  switchTurn();
 }
 
 // Función para el turno de la máquina
@@ -112,13 +124,17 @@ function machineTurn() {
   updateDeckCount();
   renderActiveCards();
 
-  // Cambiar de turno al jugador
   checkGameOver();
   switchTurn();
 }
 
 // Función para robar una carta
 function drawCard() {
+  if (!playerTurn) {
+    alert("Es el turno de la máquina. ¡Espera!");
+    return;
+  }
+
   if (deckCount > 0) {
     const cardIndex = Math.floor(Math.random() * deck.length);
     const card = deck.splice(cardIndex, 1)[0];
@@ -126,6 +142,7 @@ function drawCard() {
     deckCount--;
     updateDeckCount();
     renderPlayerHand();
+    showPassButton(); // Mostrar el botón de pasar
   } else {
     alert("El mazo está vacío.");
   }
@@ -155,7 +172,7 @@ function playCard(index) {
   applyCardEffect(card);
   renderPlayerHand();
   renderActiveCards();
-
+  hidePassButton(); // Ocultar el botón de pasar cuando se juega una carta
   checkGameOver();
   switchTurn();
 }
@@ -228,9 +245,7 @@ function activateSabotage(card) {
 
 // Efectos de cartas de eventos
 function handleEventEffect(card) {
-  if (card.effect === "sabotage-lights") {
-    alert("Evento: Sabotaje de luces activado. El próximo turno es más difícil.");
-  } else if (card.effect === "remove-sabotage") {
+  if (card.effect === "remove-sabotage") {
     alert("Evento: Todos los sabotajes han sido eliminados.");
     sabotages = [];
     renderActiveCards();
@@ -273,8 +288,9 @@ function checkGameOver() {
   }
 }
 
-// Evento para robar cartas
-drawCardButton.addEventListener("click", playerTurnHandler);
+// Eventos para botones
+drawCardButton.addEventListener("click", drawCard);
+passTurnButton.addEventListener("click", passTurn);
 
 // Actualizar el contador inicial del mazo
 updateDeckCount();
