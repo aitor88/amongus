@@ -116,6 +116,8 @@ function drawCard() {
 
   cardDrawnThisTurn = true;
   updateDeckCount();
+
+  // Mostrar el botón "Pasar"
   passTurnButton.style.display = "inline-block";
 
   checkWinCondition();
@@ -126,7 +128,6 @@ function applyImpostorEffect(card) {
   switch (card.sabotage) {
     case "disable-next-turn":
       alert("Sabotaje: No podrás jugar en tu próximo turno.");
-      // Implementar lógica de bloqueo de turno
       break;
 
     case "lose-card":
@@ -222,6 +223,22 @@ function handleEventEffect(card) {
   }
 }
 
+// Pasar el turno
+function passTurn() {
+  if (!playerTurn) {
+    alert("No puedes pasar el turno en este momento.");
+    return;
+  }
+
+  cardDrawnThisTurn = false;
+  playerTurn = false;
+
+  updateTurnIndicator();
+  passTurnButton.style.display = "none";
+
+  setTimeout(machineTurn, 1000);
+}
+
 // Turno de la máquina
 function machineTurn() {
   if (deck.length === 0) {
@@ -246,6 +263,8 @@ function machineTurn() {
 
   playerTurn = true;
   updateTurnIndicator();
+  passTurnButton.style.display = "none";
+
   checkWinCondition();
 }
 
