@@ -14,7 +14,7 @@
     </header>
 
     <!-- Zona principal -->
-    <main>
+    <main class="main-layout">
       <!-- Zona de 1/4: Mazo, Turno y Controles -->
       <div class="info-area">
         <div class="deck-area">
@@ -23,8 +23,10 @@
             <p>Mazo: <span id="deck-count">20</span> cartas</p>
           </div>
         </div>
-        <div class="controls">
+        <div class="turn-area">
           <p id="turn-indicator">Turno: Jugador</p>
+        </div>
+        <div class="controls">
           <button id="draw-card">Robar Carta</button>
           <button id="pass-turn" style="display: none;">Pasar</button>
         </div>
