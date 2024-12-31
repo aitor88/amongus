@@ -300,7 +300,7 @@ function resetGame() {
 
 // Inicializar el juego
 function initializeGame() {
-  shuffleDeck();
+  shuffleDeck(); // Mezclar el mazo antes de iniciar
   renderPlayerHand();
   renderOpponentHand();
   renderActiveCards();
