@@ -128,6 +128,38 @@ function renderActiveCards() {
   });
 }
 
+// Robar una carta
+function drawCard() {
+  if (!playerTurn || cardDrawnThisTurn) return;
+  if (deck.length === 0) {
+    logAction("El mazo está vacío.");
+    return;
+  }
+  const card = deck.pop();
+  if (card.type === "impostor") {
+    logAction("¡Impostor detectado! Un sabotaje ha sido activado.");
+    activeCards.push(card);
+    renderActiveCards();
+    applyImpostorEffect(card);
+  } else {
+    playerHand.push(card);
+    renderPlayerHand();
+  }
+  cardDrawnThisTurn = true;
+  updateDeckCount();
+  passTurnButton.style.display = "inline-block";
+}
+
+// Pasar turno
+function passTurn() {
+  if (!playerTurn) {
+    logAction("No puedes pasar el turno en este momento.");
+    return;
+  }
+  logAction("Has pasado el turno.");
+  nextTurn();
+}
+
 // Función centralizada para alternar turnos
 function nextTurn() {
   playerTurn = !playerTurn;
@@ -135,7 +167,6 @@ function nextTurn() {
   if (playerTurn) {
     logAction("Es el turno del jugador.");
     cardDrawnThisTurn = false;
-    passTurnButton.style.display = "none";
   } else {
     logAction("Es el turno de la máquina.");
     setTimeout(machineTurn, 1000);
@@ -167,6 +198,38 @@ function machineTurn() {
   }
 
   if (!checkWinCondition()) nextTurn();
+}
+
+// Aplicar el efecto de un impostor
+function applyImpostorEffect(card) {
+  if (card.sabotage === "disable-next-turn") {
+    logAction("Sabotaje: El siguiente turno del jugador está desactivado.");
+    playerTurn = false;
+    setTimeout(machineTurn, 1000);
+  } else if (card.sabotage === "lose-card") {
+    if (playerHand.length > 0) {
+      playerHand.pop();
+      logAction("Sabotaje: Has perdido una carta.");
+      renderPlayerHand();
+    }
+  } else if (card.sabotage === "double-sabotage") {
+    logAction("Sabotaje: ¡Dos sabotajes se han activado!");
+    activeCards.push({ name: "Sabotaje Adicional" }, { name: "Sabotaje Adicional" });
+    renderActiveCards();
+  }
+}
+
+// Aplicar efecto de cartas de evento
+function handleEventEffect(card) {
+  if (card.effect === "remove-sabotage") {
+    logAction("Evento: Todos los sabotajes han sido eliminados.");
+    activeCards = activeCards.filter((c) => c.type !== "impostor");
+    renderActiveCards();
+  } else if (card.effect === "lose-hand") {
+    logAction("Evento: ¡Has perdido todas tus cartas!");
+    playerHand = [];
+    renderPlayerHand();
+  }
 }
 
 // Verificar condiciones de victoria
