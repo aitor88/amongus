@@ -118,35 +118,39 @@ main {
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   position: relative;
   overflow: hidden;
+  padding: 5px;
+  box-sizing: border-box;
 }
 
+/* Título de la carta (parte superior) */
 .card .card-title {
   width: 100%;
   text-align: center;
   font-size: 0.7rem;
+  font-weight: bold;
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
-  padding: 5px;
+  padding: 2px 0;
+  position: absolute;
+  top: 0;
   box-sizing: border-box;
-  line-height: 1.2;
-  word-wrap: break-word;
 }
 
+/* Descripción de la carta (parte inferior) */
 .card .card-description {
   width: 100%;
   text-align: center;
   font-size: 0.6rem;
   background-color: rgba(255, 255, 255, 0.8);
   color: black;
-  padding: 2px;
-  box-sizing: border-box;
+  padding: 2px 0;
   position: absolute;
-  bottom: 20px;
-  line-height: 1.1;
+  bottom: 0;
+  box-sizing: border-box;
 }
 
 /* Turn Indicator */
