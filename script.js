@@ -1,18 +1,24 @@
-// Baraja inicial de cartas simplificada
+// Baraja inicial de cartas (20 cartas)
 const deck = [
-  { type: "tripulante", name: "Detective", effect: "reveal" },
-  { type: "tripulante", name: "Ingeniero", effect: "repair" },
-  { type: "tripulante", name: "Explorador", effect: "draw" },
-  { type: "impostor", name: "Impostor 1", sabotage: "disable-next-turn" },
-  { type: "impostor", name: "Impostor 2", sabotage: "lose-card" },
-  { type: "evento", name: "Reparación global", effect: "remove-sabotage" },
-  { type: "evento", name: "Sabotaje Mayor", effect: "lose-hand" },
+  { type: "tripulante", name: "Detective", effect: "add-points", points: 2 },
+  { type: "tripulante", name: "Detective", effect: "add-points", points: 2 },
+  { type: "tripulante", name: "Ingeniero", effect: "add-points", points: 3 },
+  { type: "tripulante", name: "Ingeniero", effect: "add-points", points: 3 },
+  { type: "tripulante", name: "Explorador", effect: "add-points", points: 1 },
+  { type: "tripulante", name: "Explorador", effect: "draw-extra", points: 1 },
+  { type: "tripulante", name: "Guardián", effect: "block-sabotage", points: 0 },
+  { type: "tripulante", name: "Guardián", effect: "block-sabotage", points: 0 },
+  { type: "impostor", name: "Impostor", effect: "remove-points", points: -3 },
+  { type: "impostor", name: "Impostor", effect: "remove-points", points: -3 },
+  { type: "evento", name: "Reparación global", effect: "recover-points", points: 3 },
+  { type: "evento", name: "Sabotaje mayor", effect: "remove-points", points: -2 },
 ];
 
 // Estado inicial del juego
 let playerHand = [];
 let opponentHand = [];
-let activeCards = [];
+let playerPoints = 0;
+let opponentPoints = 0;
 let playerTurn = true;
 let cardDrawnThisTurn = false;
 
@@ -20,11 +26,12 @@ let cardDrawnThisTurn = false;
 const turnIndicator = document.getElementById("turn-indicator");
 const playerHandElem = document.getElementById("player-hand");
 const opponentHandElem = document.getElementById("opponent-hand");
-const activeCardsElem = document.getElementById("active-cards");
 const drawCardButton = document.getElementById("draw-card");
 const passTurnButton = document.getElementById("pass-turn");
 const deckCountElem = document.getElementById("deck-count");
 const gameLog = document.getElementById("game-log");
+const playerPointsElem = document.getElementById("player-points");
+const opponentPointsElem = document.getElementById("opponent-points");
 
 // Mezclar el mazo inicial
 function shuffleDeck() {
@@ -39,12 +46,18 @@ function updateDeckCount() {
   deckCountElem.textContent = deck.length;
 }
 
+// Actualizar puntos
+function updatePoints() {
+  playerPointsElem.textContent = `Puntos del jugador: ${playerPoints}`;
+  opponentPointsElem.textContent = `Puntos de la máquina: ${opponentPoints}`;
+}
+
 // Actualizar indicador de turno
 function updateTurnIndicator() {
   turnIndicator.textContent = playerTurn ? "Turno: Jugador" : "Turno: Máquina";
 }
 
-// Registrar acciones en "Lo que sucede" (últimos eventos arriba)
+// Registrar acciones en "Lo que sucede"
 function logAction(message) {
   const logEntry = document.createElement("div");
   logEntry.textContent = message;
@@ -57,7 +70,7 @@ function renderPlayerHand() {
   playerHand.forEach((card, index) => {
     const cardElem = document.createElement("div");
     cardElem.classList.add("card");
-    cardElem.textContent = card.name;
+    cardElem.textContent = `${card.name} (${card.points})`;
     cardElem.addEventListener("click", () => playCard(index));
     playerHandElem.appendChild(cardElem);
   });
@@ -84,10 +97,61 @@ function drawCard() {
   const card = deck.pop();
   playerHand.push(card);
   renderPlayerHand();
-  updateDeckCount();
   cardDrawnThisTurn = true;
+  updateDeckCount();
   passTurnButton.style.display = "inline-block";
-  logAction(`Has robado una carta: ${card.name}`);
+}
+
+// Jugar una carta
+function playCard(index) {
+  if (!playerTurn) {
+    logAction("No puedes jugar cartas en el turno de la máquina.");
+    return;
+  }
+
+  const playedCard = playerHand.splice(index, 1)[0];
+  logAction(`Has jugado la carta ${playedCard.name}.`);
+
+  applyCardEffect(playedCard, true);
+
+  renderPlayerHand();
+  updatePoints();
+  checkWinCondition();
+  nextTurn();
+}
+
+// Aplicar efecto de una carta
+function applyCardEffect(card, isPlayer) {
+  if (card.effect === "add-points") {
+    if (isPlayer) {
+      playerPoints += card.points;
+      logAction(`Ganaste ${card.points} puntos.`);
+    } else {
+      opponentPoints += card.points;
+      logAction(`La máquina ganó ${card.points} puntos.`);
+    }
+  } else if (card.effect === "remove-points") {
+    if (isPlayer) {
+      playerPoints += card.points;
+      logAction(`Perdiste ${Math.abs(card.points)} puntos.`);
+    } else {
+      opponentPoints += card.points;
+      logAction(`La máquina perdió ${Math.abs(card.points)} puntos.`);
+    }
+  } else if (card.effect === "recover-points") {
+    if (isPlayer) {
+      playerPoints += card.points;
+      logAction("Recuperaste puntos perdidos.");
+    } else {
+      opponentPoints += card.points;
+      logAction("La máquina recuperó puntos perdidos.");
+    }
+  } else if (card.effect === "draw-extra" && isPlayer) {
+    logAction("Robaste una carta extra.");
+    if (deck.length > 0) playerHand.push(deck.pop());
+    renderPlayerHand();
+    updateDeckCount();
+  }
 }
 
 // Pasar turno
@@ -97,113 +161,75 @@ function passTurn() {
     return;
   }
   logAction("Has pasado el turno.");
-  cardDrawnThisTurn = false;
-  playerTurn = false;
+  nextTurn();
+}
+
+// Función centralizada para alternar turnos
+function nextTurn() {
+  playerTurn = !playerTurn;
   updateTurnIndicator();
-  setTimeout(machineTurn, 1000);
+  if (!playerTurn) {
+    setTimeout(machineTurn, 1000);
+  } else {
+    cardDrawnThisTurn = false;
+  }
 }
 
 // Turno de la máquina
 function machineTurn() {
-  logAction("Es el turno de la máquina.");
   if (deck.length === 0) {
     logAction("El mazo está vacío. Fin del juego.");
     return;
   }
+
   const card = deck.pop();
   opponentHand.push(card);
   renderOpponentHand();
-  logAction("La máquina ha robado una carta.");
-  if (card.type === "impostor") {
-    applyImpostorEffect(card);
-  } else if (card.type === "evento") {
-    handleEventEffect(card);
-  }
-  playerTurn = true;
-  updateTurnIndicator();
+
+  const playedCard = opponentHand.pop();
+  logAction("La máquina jugó una carta.");
+  applyCardEffect(playedCard, false);
+
+  updatePoints();
+  checkWinCondition();
+  nextTurn();
 }
 
-// Aplicar el efecto de un impostor
-function applyImpostorEffect(card) {
-  if (card.sabotage === "disable-next-turn") {
-    logAction("Sabotaje: Pierdes tu próximo turno.");
-    playerTurn = false;
-    setTimeout(machineTurn, 1000);
-  } else if (card.sabotage === "lose-card") {
-    if (playerHand.length > 0) {
-      playerHand.pop();
-      renderPlayerHand();
-      logAction("Sabotaje: Has perdido una carta.");
-    } else {
-      logAction("Sabotaje: No tienes cartas para perder.");
-    }
-  }
-}
-
-// Aplicar efecto de cartas de evento
-function handleEventEffect(card) {
-  if (card.effect === "remove-sabotage") {
-    logAction("Evento: Todos los sabotajes han sido eliminados.");
-    activeCards = [];
-  } else if (card.effect === "lose-hand") {
-    logAction("Evento: ¡Has perdido todas tus cartas!");
-    playerHand = [];
-    renderPlayerHand();
+// Verificar condiciones de victoria
+function checkWinCondition() {
+  if (playerPoints >= 10) {
+    logAction("¡Ganaste! Llegaste a 10 puntos.");
+    disableGame();
+  } else if (opponentPoints >= 10) {
+    logAction("La máquina ganó. Llegó a 10 puntos.");
+    disableGame();
+  } else if (playerPoints <= 0) {
+    logAction("Perdiste. Tus puntos llegaron a 0.");
+    disableGame();
+  } else if (opponentPoints <= 0) {
+    logAction("Ganaste. Los puntos de la máquina llegaron a 0.");
+    disableGame();
   }
 }
 
-// Jugar una carta
-function playCard(index) {
-  if (!playerTurn) {
-    logAction("No puedes jugar cartas en el turno de la máquina.");
-    return;
-  }
-  const playedCard = playerHand.splice(index, 1)[0];
-  logAction(`Has jugado la carta: ${playedCard.name}`);
-  renderPlayerHand();
-  if (playedCard.type === "tripulante") {
-    logAction(`Efecto activado: ${playedCard.effect}`);
-    handleTripulanteEffect(playedCard);
-  } else if (playedCard.type === "evento") {
-    handleEventEffect(playedCard);
-  }
-  cardDrawnThisTurn = false;
-  passTurnButton.style.display = "none";
-  playerTurn = false;
-  updateTurnIndicator();
-  setTimeout(machineTurn, 1000);
-}
-
-// Efectos de cartas de tripulante
-function handleTripulanteEffect(card) {
-  if (card.effect === "reveal") {
-    if (deck.length > 0) {
-      const revealedCard = deck.pop();
-      logAction(`Detective: Has revelado la carta ${revealedCard.name}`);
-      playerHand.push(revealedCard);
-      renderPlayerHand();
-      updateDeckCount();
-    } else {
-      logAction("No hay más cartas para revelar.");
-    }
-  } else if (card.effect === "repair") {
-    logAction("Ingeniero: Has reparado un sabotaje.");
-  } else if (card.effect === "draw") {
-    logAction("Explorador: Robas dos cartas.");
-    if (deck.length > 0) playerHand.push(deck.pop());
-    if (deck.length > 0) playerHand.push(deck.pop());
-    renderPlayerHand();
-    updateDeckCount();
-  }
+// Deshabilitar el juego
+function disableGame() {
+  drawCardButton.disabled = true;
+  passTurnButton.disabled = true;
 }
 
 // Inicializar el juego
 function initializeGame() {
   shuffleDeck();
+  for (let i = 0; i < 3; i++) {
+    if (deck.length > 0) playerHand.push(deck.pop());
+    if (deck.length > 0) opponentHand.push(deck.pop());
+  }
   renderPlayerHand();
   renderOpponentHand();
   updateDeckCount();
   updateTurnIndicator();
+  updatePoints();
 }
 
 // Eventos
