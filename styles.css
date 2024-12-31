@@ -35,9 +35,10 @@ header h1 {
 /* Main Layout */
 .main-layout {
   display: flex;
+  flex-direction: row;
   width: 100%;
   margin: 20px 0;
-  gap: 20px;
+  gap: 10px;
 }
 
 /* Info Area (1/4) */
@@ -49,7 +50,8 @@ header h1 {
   justify-content: flex-start;
   padding: 20px;
   gap: 15px;
-  border-right: 2px solid #ddd;
+  background-color: #e8e8e8;
+  border-right: 2px solid #ccc;
 }
 
 .deck-area {
@@ -57,18 +59,18 @@ header h1 {
 }
 
 .deck-image {
-  width: 100px;
+  width: 80px;
   height: auto;
   margin-bottom: 10px;
 }
 
 .deck-info {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
 .turn-area {
   text-align: center;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: bold;
 }
 
@@ -80,8 +82,8 @@ header h1 {
 }
 
 .controls button {
-  padding: 10px 20px;
-  font-size: 1rem;
+  padding: 8px 15px;
+  font-size: 0.9rem;
   background-color: #007bff;
   color: #fff;
   border: none;
@@ -107,6 +109,7 @@ header h1 {
   align-items: center;
   justify-content: flex-start;
   padding: 20px;
+  background-color: #fff;
 }
 
 .section {
@@ -118,18 +121,21 @@ header h1 {
 .active-cards,
 .player-hand {
   display: flex;
-  gap: 10px;
+  gap: 5px;
   justify-content: center;
   align-items: center;
-  height: 120px;
+  height: 100px; /* Reducido */
   padding: 5px;
   flex-wrap: wrap;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 8px;
 }
 
 /* Cartas */
 .card {
-  width: 80px;
-  height: 110px;
+  width: 60px; /* Reducido */
+  height: 90px; /* Reducido */
   background-size: cover;
   background-position: center;
   border: 1px solid #ddd;
@@ -148,7 +154,7 @@ header h1 {
 .card .card-title {
   width: 100%;
   text-align: center;
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   font-weight: bold;
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
@@ -162,7 +168,7 @@ header h1 {
 .card .card-description {
   width: 100%;
   text-align: center;
-  font-size: 0.6rem;
+  font-size: 0.5rem;
   background-color: rgba(255, 255, 255, 0.8);
   color: black;
   padding: 2px 0;
@@ -176,7 +182,7 @@ footer {
   width: 100%;
   background-color: #333;
   color: #fff;
-  padding: 20px 0;
+  padding: 10px 0;
   text-align: center;
 }
 
@@ -186,14 +192,14 @@ footer {
 }
 
 .game-log-area h2 {
-  font-size: 1.2rem;
+  font-size: 1rem;
   margin-bottom: 10px;
 }
 
 .game-log {
-  font-size: 0.9rem;
-  line-height: 1.5;
-  height: 200px;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  height: 150px; /* Reducido */
   overflow-y: auto;
   border: 1px solid #ddd;
   padding: 10px;
@@ -211,7 +217,7 @@ footer {
   .info-area {
     width: 100%;
     border-right: none;
-    border-bottom: 2px solid #ddd;
+    border-bottom: 2px solid #ccc;
   }
 
   .play-area {
@@ -219,11 +225,11 @@ footer {
   }
 
   .card {
-    width: 70px;
-    height: 100px;
+    width: 50px;
+    height: 75px;
   }
 
   .game-log {
-    height: 150px;
+    height: 120px;
   }
 }
