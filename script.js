@@ -12,30 +12,95 @@ const deck = [
 let playerHand = [];
 let activeCards = [];
 let sabotages = [];
+let discoveredImpostors = 0;
+let maxSabotages = 3;
 let deckCount = deck.length;
-let playerTurnDisabled = false;
+let playerTurn = true; // Comienza con el jugador
 
 // Referencias a elementos HTML
 const deckCountElem = document.getElementById("deck-count");
 const playerHandElem = document.getElementById("player-hand");
 const activeCardsElem = document.getElementById("active-cards");
 const drawCardButton = document.getElementById("draw-card");
+const turnIndicator = document.createElement("div");
+turnIndicator.id = "turn-indicator";
+document.body.appendChild(turnIndicator);
 
 // Función para actualizar el contador del mazo
 function updateDeckCount() {
   deckCountElem.textContent = deckCount;
 }
 
-// Función para robar una carta
-function drawCard() {
-  if (playerTurnDisabled) {
-    alert("¡Tu turno está deshabilitado por un sabotaje!");
-    playerTurnDisabled = false; // Restablece el estado para el próximo turno
+// Función para alternar turnos
+function switchTurn() {
+  playerTurn = !playerTurn;
+  if (!playerTurn) {
+    turnIndicator.textContent = "Turno de la Máquina...";
+    turnIndicator.style.backgroundColor = "red";
+    setTimeout(machineTurn, 1000); // Espera 1 segundo para el turno de la máquina
+  } else {
+    turnIndicator.textContent = "Tu Turno";
+    turnIndicator.style.backgroundColor = "green";
+  }
+}
+
+// Función para el turno del jugador
+function playerTurnHandler() {
+  if (!playerTurn) {
+    alert("Es el turno de la máquina. ¡Espera!");
+    return;
+  }
+  drawCard();
+  checkGameOver();
+}
+
+// Función para el turno de la máquina
+function machineTurn() {
+  if (deckCount === 0) {
+    alert("El mazo está vacío. ¡El juego ha terminado!");
     return;
   }
 
+  // Priorizar sabotajes si hay pocos en juego
+  if (sabotages.length < maxSabotages) {
+    const sabotageCard = deck.find((card) => card.type === "impostor");
+    if (sabotageCard) {
+      activateSabotage(sabotageCard);
+      deck.splice(deck.indexOf(sabotageCard), 1);
+      deckCount--;
+      updateDeckCount();
+      renderActiveCards();
+      checkGameOver();
+      switchTurn();
+      return;
+    }
+  }
+
+  // Si no hay impostores, robar una carta aleatoria
+  const cardIndex = Math.floor(Math.random() * deck.length);
+  const card = deck.splice(cardIndex, 1)[0];
+  activeCards.push(card);
+  deckCount--;
+
+  if (card.type === "impostor") {
+    activateSabotage(card);
+  } else if (card.type === "evento") {
+    handleEventEffect(card);
+  } else {
+    alert(`La máquina ha jugado: ${card.name}`);
+  }
+
+  updateDeckCount();
+  renderActiveCards();
+
+  // Cambiar de turno al jugador
+  checkGameOver();
+  switchTurn();
+}
+
+// Función para robar una carta
+function drawCard() {
   if (deckCount > 0) {
-    // Robar una carta al azar
     const cardIndex = Math.floor(Math.random() * deck.length);
     const card = deck.splice(cardIndex, 1)[0];
     playerHand.push(card);
@@ -61,11 +126,19 @@ function renderPlayerHand() {
 
 // Función para jugar una carta
 function playCard(index) {
+  if (!playerTurn) {
+    alert("Es el turno de la máquina. ¡Espera!");
+    return;
+  }
+
   const card = playerHand.splice(index, 1)[0];
   activeCards.push(card);
   applyCardEffect(card);
   renderPlayerHand();
   renderActiveCards();
+
+  checkGameOver();
+  switchTurn();
 }
 
 // Aplicar efecto de una carta
@@ -114,7 +187,7 @@ function activateSabotage(card) {
 
   switch (card.sabotage) {
     case "disable-next-turn":
-      playerTurnDisabled = true;
+      alert("Sabotaje: ¡Tu próximo turno está deshabilitado!");
       break;
     case "lose-card":
       if (playerHand.length > 0) {
@@ -132,7 +205,6 @@ function activateSabotage(card) {
 function handleEventEffect(card) {
   if (card.effect === "sabotage-lights") {
     alert("Evento: Sabotaje de luces activado. El próximo turno es más difícil.");
-    playerTurnDisabled = true; // Simula un efecto negativo
   } else if (card.effect === "remove-sabotage") {
     alert("Evento: Todos los sabotajes han sido eliminados.");
     sabotages = [];
@@ -160,8 +232,20 @@ function renderActiveCards() {
   });
 }
 
+// Verificar condiciones de victoria o derrota
+function checkGameOver() {
+  if (discoveredImpostors >= 2) {
+    alert("¡Has ganado! Descubriste a todos los impostores.");
+    return;
+  }
+  if (sabotages.length >= maxSabotages) {
+    alert("¡La máquina ha ganado! Se acumularon demasiados sabotajes.");
+    return;
+  }
+}
+
 // Evento para robar cartas
-drawCardButton.addEventListener("click", drawCard);
+drawCardButton.addEventListener("click", playerTurnHandler);
 
 // Actualizar el contador inicial del mazo
 updateDeckCount();
