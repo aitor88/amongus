@@ -94,24 +94,26 @@ main {
   padding: 20px;
 }
 
+.section {
+  margin-bottom: 20px;
+  width: 100%;
+  text-align: center;
+}
+
 .active-cards,
 .player-hand {
   display: flex;
   gap: 10px;
   justify-content: center;
   align-items: center;
-  height: 120px; /* Altura ajustada */
+  height: 120px;
   padding: 5px;
-}
-
-.player-hand {
-  margin-top: 15px;
 }
 
 /* Cartas */
 .card {
-  width: 80px; /* Ancho ajustado */
-  height: 110px; /* Altura ajustada */
+  width: 80px;
+  height: 110px;
   background-size: cover;
   background-position: center;
   border: 1px solid #ddd;
