@@ -61,13 +61,26 @@ function updateTurnIndicator() {
 }
 
 // Renderizar la mano del jugador
+// Renderizar la mano del jugador
 function renderPlayerHand() {
-  playerHandElem.innerHTML = "";
+  const playerHandElem = document.getElementById("player-hand");
+  playerHandElem.innerHTML = ""; // Limpiar el contenido actual
+
   playerHand.forEach((card, index) => {
     const cardElem = document.createElement("div");
-    cardElem.classList.add("card", card.type);
-    cardElem.textContent = card.name;
+    cardElem.classList.add("card");
+    cardElem.style.backgroundImage = `url('cartas/${card.name.toLowerCase().replace(/\s+/g, '-')}.png')`;
+
+    // Añadir título en la parte inferior
+    const cardTitle = document.createElement("div");
+    cardTitle.classList.add("card-title");
+    cardTitle.textContent = card.name;
+
+    cardElem.appendChild(cardTitle);
+
+    // Añadir evento para jugar la carta
     cardElem.addEventListener("click", () => playCard(index));
+
     playerHandElem.appendChild(cardElem);
   });
 }
