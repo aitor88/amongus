@@ -1,9 +1,8 @@
-/* General */
+/* General estilos para el cuerpo */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
   background-color: #f4f4f4;
   color: #333;
   display: flex;
@@ -28,22 +27,22 @@ header {
 
 header h1 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 2rem;
   color: #333;
 }
 
 /* Main Layout */
 .main-layout {
   display: flex;
-  flex-direction: row; /* Mantener horizontal en pantallas grandes */
+  flex-direction: row;
   width: 100%;
   margin: 20px 0;
   gap: 10px;
 }
 
-/* Info Area (1/5) */
+/* Info Area (1/5 de la pantalla) */
 .info-area {
-  width: 20%; /* 1/5 de la pantalla */
+  width: 20%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -59,18 +58,18 @@ header h1 {
 }
 
 .deck-image {
-  width: 60px; /* Ajuste para pantallas pequeñas */
+  width: 60px;
   height: auto;
   margin-bottom: 10px;
 }
 
 .deck-info {
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .turn-area {
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   font-weight: bold;
 }
 
@@ -82,38 +81,33 @@ header h1 {
 }
 
 .controls button {
-  padding: 8px 12px;
-  font-size: 0.8rem;
+  padding: 10px 15px;
+  font-size: 1rem;
   background-color: #007bff;
-  color: #fff;
+  color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s;
 }
 
 .controls button:hover {
   background-color: #0056b3;
 }
 
-.controls button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-/* Play Area (4/5) */
+/* Play Area (4/5 de la pantalla) */
 .play-area {
-  width: 80%; /* 4/5 de la pantalla */
+  width: 80%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   padding: 10px;
-  gap: 20px;
+  gap: 15px;
 }
 
 .section {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   width: 100%;
   text-align: center;
 }
@@ -121,15 +115,56 @@ header h1 {
 .active-cards,
 .player-hand {
   display: flex;
-  gap: 5px;
+  flex-wrap: wrap;
+  gap: 10px;
   justify-content: center;
   align-items: center;
-  height: 80px; /* Reducido */
   padding: 5px;
-  flex-wrap: wrap;
   background-color: #f9f9f9;
   border: 1px solid #ccc;
   border-radius: 8px;
+  min-height: 150px;
+}
+
+/* Estilo de las cartas */
+.card {
+  width: 90px; /* Tamaño cuadrado */
+  height: 90px; /* Tamaño cuadrado */
+  background-size: cover;
+  background-position: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 5px;
+}
+
+.card-title {
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.6);
+  width: 100%;
+  padding: 2px;
+  position: absolute;
+  top: 0;
+}
+
+.card-description {
+  font-size: 0.7rem;
+  text-align: center;
+  color: black;
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 100%;
+  padding: 2px;
+  position: absolute;
+  bottom: 0;
 }
 
 /* Lo que sucede */
@@ -139,15 +174,15 @@ header h1 {
 }
 
 .game-log-area h2 {
-  font-size: 0.9rem;
-  margin-bottom: 5px;
+  font-size: 1rem;
+  margin-bottom: 10px;
   text-align: center;
 }
 
 .game-log {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   line-height: 1.4;
-  height: 100px; /* Ajuste */
+  height: 120px;
   overflow-y: auto;
   border: 1px solid #ddd;
   padding: 10px;
@@ -156,10 +191,10 @@ header h1 {
   color: #333;
 }
 
-/* Responsiveness */
+/* Responsive Design */
 @media (max-width: 768px) {
   .main-layout {
-    flex-direction: column; /* Apilar verticalmente en pantallas pequeñas */
+    flex-direction: column;
   }
 
   .info-area {
@@ -172,21 +207,17 @@ header h1 {
     width: 100%;
   }
 
-  .deck-image {
-    width: 50px; /* Más pequeño en móviles */
+  .card {
+    width: 70px; /* Reducir tamaño para pantallas pequeñas */
+    height: 70px;
   }
 
   .active-cards,
   .player-hand {
-    height: 60px; /* Reducido */
-  }
-
-  .card {
-    width: 40px; /* Tamaño de cartas para pantallas pequeñas */
-    height: 60px;
+    min-height: 100px;
   }
 
   .game-log {
-    height: 80px; /* Más compacto */
+    height: 100px; /* Ajuste menor para pantallas pequeñas */
   }
 }
