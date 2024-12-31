@@ -8,40 +8,42 @@
 </head>
 <body>
   <div class="game-container">
-    <!-- Sección superior -->
+    <!-- Título -->
+    <header class="game-header">
+      <h1>Among Us Card Game</h1>
+    </header>
+
+    <!-- Sección del mazo y turno -->
     <div class="top-section">
-      <h1 class="game-title">Among Us Card Game</h1>
-      <div class="turn-info">
+      <div class="deck-area">
+        <div id="deck-count" class="deck-count">20</div>
+        <img src="images/deck.png" alt="Mazo" class="deck-image">
+      </div>
+      <div class="turn-area">
         <p id="turn-indicator">Turno: Jugador</p>
       </div>
     </div>
 
-    <!-- Sección central -->
-    <div class="main-section">
-      <div class="deck-section">
-        <div class="deck">
-          <p id="deck-count">20</p>
-          <img src="images/deck.png" alt="Mazo" class="deck-image">
-        </div>
+    <!-- Tablero de juego -->
+    <main class="main-section">
+      <div id="active-cards" class="active-cards">
+        <h2>Cartas en la mesa:</h2>
       </div>
-      <div class="game-board">
-        <div id="active-cards" class="active-cards"></div>
-        <div id="game-log" class="game-log">
-          <p>Lo que sucede...</p>
-        </div>
+      <div id="game-log" class="game-log">
+        <h2>Lo que sucede:</h2>
       </div>
-    </div>
+    </main>
 
-    <!-- Sección inferior -->
-    <div class="bottom-section">
-      <div class="player-hand" id="player-hand">
+    <!-- Mano del jugador -->
+    <section class="bottom-section">
+      <div id="player-hand" class="player-hand">
         <h2>Tu mano:</h2>
       </div>
       <div class="controls">
         <button id="draw-card" class="action-button">Robar Carta</button>
         <button id="pass-turn" class="action-button">Pasar Turno</button>
       </div>
-    </div>
+    </section>
   </div>
 </body>
 </html>
