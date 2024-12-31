@@ -3,24 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Among Us Card Game</title>
+  <title>Among Us: Card Game</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div id="game-container">
     <h1>Among Us: Card Game</h1>
     <div id="game-board">
-      <!-- Zona de juego -->
+      <!-- Zona del mazo -->
       <div id="deck-area">
         <button id="draw-card">Robar Carta</button>
+        <button id="pass-turn" style="display: none;">Pasar</button>
         <div id="deck">Mazo: <span id="deck-count">20</span> cartas</div>
       </div>
 
+      <!-- Mano del jugador -->
       <div id="player-area">
         <h2>Mano del Jugador</h2>
         <div id="player-hand"></div>
       </div>
 
+      <!-- Zona de juego -->
       <div id="play-area">
         <h2>Zona de Juego</h2>
         <div id="active-cards"></div>
