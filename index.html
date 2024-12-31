@@ -8,32 +8,34 @@
 </head>
 <body>
   <div id="game-container">
-    <h1>Among Us: Card Game</h1>
-    <div id="turn-indicator">Turno: Jugador</div> <!-- Indicador de turno -->
+    <!-- Indicador de Turno -->
+    <div id="header">
+      <div id="turn-indicator">Turno: Jugador</div>
+    </div>
 
-    <!-- Mano de la máquina -->
+    <!-- Mano de la Máquina -->
     <div id="opponent-area">
       <h2>Mano de la Máquina</h2>
       <div id="opponent-hand"></div>
     </div>
 
-    <!-- Zona del mazo -->
-    <div id="deck-area">
-      <button id="draw-card">Robar Carta</button>
-      <button id="pass-turn" style="display: none;">Pasar</button>
-      <div id="deck">Mazo: <span id="deck-count">20</span> cartas</div>
+    <!-- Zona de Juego -->
+    <div id="play-area">
+      <h2>Zona de Juego</h2>
+      <div id="active-cards"></div>
     </div>
 
-    <!-- Mano del jugador -->
+    <!-- Zona Interactiva -->
     <div id="player-area">
       <h2>Mano del Jugador</h2>
       <div id="player-hand"></div>
     </div>
 
-    <!-- Zona de juego -->
-    <div id="play-area">
-      <h2>Zona de Juego</h2>
-      <div id="active-cards"></div>
+    <!-- Botones de Interacción -->
+    <div id="controls">
+      <button id="draw-card">Robar Carta</button>
+      <button id="pass-turn" style="display: none;">Pasar</button>
+      <div id="deck">Mazo: <span id="deck-count">20</span> cartas</div>
     </div>
   </div>
 
