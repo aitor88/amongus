@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salta y Brilla</title>
+    <title>Evade los Obstáculos</title>
     <style>
         body {
             margin: 0;
@@ -37,106 +37,87 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        const gravity = 0.5;
-        const jumpStrength = -10;
-        const platformWidth = 100;
-        const platformHeight = 10;
         let score = 0;
+        let speed = 3;
+        let obstacleInterval = 2000;
+        const obstacles = [];
 
         const player = {
             x: canvas.width / 2 - 25,
-            y: canvas.height - 200, // Start higher to avoid immediate Game Over
-            width: 50, // Adjust to match image dimensions
+            y: canvas.height - 100,
+            width: 50,
             height: 50,
             dx: 0,
-            dy: 0,
             image: new Image(),
         };
-        player.image.src = "among.png"; // Load the player image
+        player.image.src = "among.png";
 
-        const platforms = [];
-
-        function createPlatform(x, y) {
-            return { x, y, width: platformWidth, height: platformHeight, color: "white" };
-        }
-
-        function initPlatforms() {
-            for (let i = 0; i < 5; i++) {
-                const platform = createPlatform(
-                    Math.random() * (canvas.width - platformWidth),
-                    canvas.height - i * 150
-                );
-
-                // Ensure a platform is directly below the player initially
-                if (i === 0) {
-                    platform.x = player.x - platformWidth / 2 + player.width / 2;
-                    platform.y = player.y + player.height + 10; // Just below the player
-                }
-
-                platforms.push(platform);
-            }
+        function createObstacle() {
+            const width = Math.random() * 50 + 50;
+            const height = Math.random() * 50 + 50;
+            const x = Math.random() * (canvas.width - width);
+            const y = -height;
+            obstacles.push({ x, y, width, height, color: "red" });
         }
 
         function drawPlayer() {
             ctx.drawImage(player.image, player.x, player.y, player.width, player.height);
         }
 
-        function drawPlatforms() {
-            platforms.forEach(platform => {
-                ctx.fillStyle = platform.color;
-                ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+        function drawObstacles() {
+            obstacles.forEach(obstacle => {
+                ctx.fillStyle = obstacle.color;
+                ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
             });
         }
 
         function updatePlayer() {
-            player.dy += gravity;
-            player.y += player.dy;
             player.x += player.dx;
 
             // Prevent player from going off-screen
             if (player.x < 0) player.x = 0;
             if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+        }
 
-            // Check collision with platforms
-            platforms.forEach(platform => {
-                if (
-                    player.dy > 0 &&
-                    player.x + player.width > platform.x &&
-                    player.x < platform.x + platform.width &&
-                    player.y + player.height > platform.y &&
-                    player.y + player.height < platform.y + platform.height
-                ) {
-                    player.dy = jumpStrength;
-                    score++;
-                    document.getElementById("score").innerText = score;
-                }
+        function updateObstacles() {
+            obstacles.forEach(obstacle => {
+                obstacle.y += speed;
             });
 
-            // Reset if the player falls off the screen
-            if (player.y > canvas.height) {
-                alert("Game Over! Your score: " + score);
-                document.location.reload();
+            // Remove obstacles that go off-screen
+            while (obstacles.length > 0 && obstacles[0].y > canvas.height) {
+                obstacles.shift();
+                score++;
+                document.getElementById("score").innerText = score;
+
+                // Increase difficulty
+                if (score % 5 === 0) {
+                    speed += 0.5;
+                }
             }
         }
 
-        function updatePlatforms() {
-            platforms.forEach(platform => {
-                platform.y += 2; // Move platforms down
-
-                // Recycle platforms that move off-screen
-                if (platform.y > canvas.height) {
-                    platform.x = Math.random() * (canvas.width - platformWidth);
-                    platform.y = 0;
+        function checkCollision() {
+            for (const obstacle of obstacles) {
+                if (
+                    player.x < obstacle.x + obstacle.width &&
+                    player.x + player.width > obstacle.x &&
+                    player.y < obstacle.y + obstacle.height &&
+                    player.y + player.height > obstacle.y
+                ) {
+                    alert("Game Over! Your score: " + score);
+                    document.location.reload();
                 }
-            });
+            }
         }
 
         function gameLoop() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawPlayer();
-            drawPlatforms();
+            drawObstacles();
             updatePlayer();
-            updatePlatforms();
+            updateObstacles();
+            checkCollision();
             requestAnimationFrame(gameLoop);
         }
 
@@ -154,8 +135,10 @@
             player.dx = 0; // Stop movement
         });
 
+        // Generate obstacles periodically
+        setInterval(createObstacle, obstacleInterval);
+
         // Initialize game
-        initPlatforms();
         gameLoop();
     </script>
 </body>
