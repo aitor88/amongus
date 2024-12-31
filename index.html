@@ -15,19 +15,27 @@
 
     <!-- Zona principal -->
     <main>
-      <!-- Zona de 1/4: Información de Jugadas -->
+      <!-- Zona de 1/4: Información del mazo y texto de jugadas -->
       <div class="info-area">
-        <h2>Lo que sucede</h2>
-        <div id="game-log" class="game-log"></div>
+        <div class="deck-area">
+          <img src="deck.png" alt="Mazo de cartas" class="deck-image">
+          <div class="deck-info">
+            <p>Mazo: <span id="deck-count">20</span> cartas</p>
+          </div>
+        </div>
+        <div class="game-log-area">
+          <h2>Lo que sucede</h2>
+          <div id="game-log" class="game-log"></div>
+        </div>
       </div>
 
-      <!-- Zona de 3/4 -->
+      <!-- Zona de 3/4: Cartas en la mesa y mano del jugador -->
       <div class="play-area">
-        <!-- Cartas de la mesa -->
         <div id="active-cards" class="active-cards"></div>
-
-        <!-- Mano del jugador -->
-        <div id="player-hand" class="player-hand"></div>
+        <div class="player-hand-area">
+          <h2>Tu Mano</h2>
+          <div id="player-hand" class="player-hand"></div>
+        </div>
       </div>
     </main>
 
