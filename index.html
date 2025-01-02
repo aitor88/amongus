@@ -1,284 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evade los Obstáculos</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
-
-        canvas {
-            display: block;
-            background: linear-gradient(to bottom, #000428, #004e92);
-        }
-
-        .score {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: white;
-            font-family: Arial, sans-serif;
-            font-size: 20px;
-        }
-
-        .power-up {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: yellow;
-            font-family: Arial, sans-serif;
-            font-size: 20px;
-        }
-
-        .game-over {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            color: white;
-            font-family: Arial, sans-serif;
-            font-size: 30px;
-            display: none;
-        }
-
-        .game-over button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 20px;
-            cursor: pointer;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juego de Cartas - Among Us</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #20232a;
+      color: #61dafb;
+    }
+    .container {
+      margin: 20px auto;
+      width: 80%;
+      max-width: 600px;
+    }
+    .card {
+      display: inline-block;
+      padding: 15px;
+      margin: 10px;
+      border: 2px solid #61dafb;
+      border-radius: 10px;
+      background-color: #282c34;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: scale(1.1);
+    }
+    #status {
+      margin: 20px 0;
+      font-size: 1.2em;
+    }
+  </style>
 </head>
 <body>
-    <div class="score">Score: <span id="score">0</span></div>
-    <div class="power-up">Power-Up: <span id="powerUp">None</span></div>
-    <canvas id="gameCanvas"></canvas>
-    <div class="game-over" id="gameOver">
-        <p>Game Over!</p>
-        <button onclick="restartGame()">Play Again</button>
+  <div class="container">
+    <h1>Juego de Cartas - Among Us</h1>
+    <p>Completa las tareas antes de que el impostor te elimine.</p>
+    <div id="status">Tareas completadas: 0/5</div>
+    <div id="cards">
+      <!-- Las cartas aparecerán aquí -->
     </div>
-
-    <script>
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
-        const gameOverScreen = document.getElementById("gameOver");
-
-        // Set canvas dimensions
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        let score = 0;
-        let speed = 3;
-        let obstacleInterval = 2000;
-        let maxObstacles = 1;
-        const obstacles = [];
-        const powerUps = [];
-        let activePowerUp = null;
-        let powerUpTimer = 0;
-        let isGameOver = false;
-
-        const player = {
-            x: canvas.width / 2 - 25,
-            y: canvas.height - 100,
-            width: 50,
-            height: 50,
-            dx: 0,
-            image: new Image(),
-        };
-        player.image.src = "among.png";
-
-        function createObstacle() {
-            for (let i = 0; i < maxObstacles; i++) {
-                const width = Math.random() * 50 + 50;
-                const height = Math.random() * 50 + 50;
-                const x = Math.random() * (canvas.width - width);
-                const y = -height;
-                obstacles.push({ x, y, width, height, color: "red" });
-            }
-        }
-
-        function createPowerUp() {
-            if (Math.random() < 0.2) { // 20% chance to spawn a power-up
-                const size = 30;
-                const x = Math.random() * (canvas.width - size);
-                const y = -size;
-                const types = ["shield", "slow", "doubleScore"];
-                const type = types[Math.floor(Math.random() * types.length)];
-                powerUps.push({ x, y, width: size, height: size, type, color: "yellow" });
-            }
-        }
-
-        function drawPlayer() {
-            ctx.drawImage(player.image, player.x, player.y, player.width, player.height);
-        }
-
-        function drawObstacles() {
-            obstacles.forEach(obstacle => {
-                ctx.fillStyle = obstacle.color;
-                ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
-            });
-        }
-
-        function drawPowerUps() {
-            powerUps.forEach(powerUp => {
-                ctx.fillStyle = powerUp.color;
-                ctx.fillRect(powerUp.x, powerUp.y, powerUp.width, powerUp.height);
-            });
-        }
-
-        function updatePlayer() {
-            player.x += player.dx;
-
-            // Prevent player from going off-screen
-            if (player.x < 0) player.x = 0;
-            if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
-        }
-
-        function updateObstacles() {
-            obstacles.forEach(obstacle => {
-                obstacle.y += speed;
-            });
-
-            while (obstacles.length > 0 && obstacles[0].y > canvas.height) {
-                obstacles.shift();
-                score++;
-                document.getElementById("score").innerText = score;
-
-                if (score % 5 === 0) {
-                    speed += 0.5;
-                    maxObstacles = Math.min(maxObstacles + 1, 10);
-                    obstacleInterval = Math.max(obstacleInterval - 100, 500);
-                }
-            }
-        }
-
-        function updatePowerUps() {
-            powerUps.forEach(powerUp => {
-                powerUp.y += speed;
-            });
-
-            while (powerUps.length > 0 && powerUps[0].y > canvas.height) {
-                powerUps.shift();
-            }
-        }
-
-        function checkCollision() {
-            for (const obstacle of obstacles) {
-                if (
-                    player.x < obstacle.x + obstacle.width &&
-                    player.x + player.width > obstacle.x &&
-                    player.y < obstacle.y + obstacle.height &&
-                    player.y + player.height > obstacle.y
-                ) {
-                    if (activePowerUp === "shield") {
-                        obstacles.splice(obstacles.indexOf(obstacle), 1);
-                    } else {
-                        endGame();
-                    }
-                }
-            }
-
-            powerUps.forEach(powerUp => {
-                if (
-                    player.x < powerUp.x + powerUp.width &&
-                    player.x + player.width > powerUp.x &&
-                    player.y < powerUp.y + powerUp.height &&
-                    player.y + player.height > powerUp.y
-                ) {
-                    activatePowerUp(powerUp.type);
-                    powerUps.splice(powerUps.indexOf(powerUp), 1);
-                }
-            });
-        }
-
-        function activatePowerUp(type) {
-            activePowerUp = type;
-            powerUpTimer = 500;
-            document.getElementById("powerUp").innerText = type;
-
-            if (type === "slow") {
-                speed /= 2;
-            } else if (type === "doubleScore") {
-                score += 10;
-            }
-        }
-
-        function deactivatePowerUp() {
-            if (activePowerUp === "slow") {
-                speed *= 2;
-            }
-            activePowerUp = null;
-            document.getElementById("powerUp").innerText = "None";
-        }
-
-        function endGame() {
-            isGameOver = true;
-            gameOverScreen.style.display = "block";
-            cancelAnimationFrame(gameLoop);
-        }
-
-        function restartGame() {
-            isGameOver = false;
-            score = 0;
-            speed = 3;
-            obstacleInterval = 2000;
-            maxObstacles = 1;
-            obstacles.length = 0;
-            powerUps.length = 0;
-            activePowerUp = null;
-            powerUpTimer = 0;
-            document.getElementById("score").innerText = score;
-            document.getElementById("powerUp").innerText = "None";
-            gameOverScreen.style.display = "none";
-            gameLoop();
-        }
-
-        function gameLoop() {
-            if (isGameOver) return;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            drawPlayer();
-            drawObstacles();
-            drawPowerUps();
-            updatePlayer();
-            updateObstacles();
-            updatePowerUps();
-            checkCollision();
-
-            if (powerUpTimer > 0) {
-                powerUpTimer--;
-                if (powerUpTimer === 0) {
-                    deactivatePowerUp();
-                }
-            }
-
-            requestAnimationFrame(gameLoop);
-        }
-
-        // Touch controls
-        canvas.addEventListener("touchstart", e => {
-            const touchX = e.touches[0].clientX;
-            if (touchX < canvas.width / 2) {
-                player.dx = -5;
-            } else {
-                player.dx = 5;
-            }
-        });
-
-        canvas.addEventListener("touchend", () => {
-            player.dx = 0;
-        });
-
-        // Generate obstacles and power-ups periodically
-        setInterval(createObstacle, obstacleInterval);
-        setInterval(createPowerUp, 5000);
-
-        // Initialize game
-        gameLoop();
-    </script>
+    <button id="next-turn">Siguiente Turno</button>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
