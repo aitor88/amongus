@@ -3,9 +3,11 @@ let tareasCompletadas = 0;
 let sabotajesActivos = 0;
 let turnosRestantes = 10;
 const maxTareas = 5;
+const maxSabotajes = 5;
 
-// Referencias a elementos del DOM
+// Referencias al DOM
 const status = document.getElementById("status");
+const saboteos = document.getElementById("saboteos");
 const cardsContainer = document.getElementById("cards");
 const nextTurnButton = document.getElementById("next-turn");
 
@@ -14,18 +16,21 @@ const cartas = [
   { tipo: "tarea", texto: "Reparar cables", puntos: 1 },
   { tipo: "tarea", texto: "Calibrar motores", puntos: 1 },
   { tipo: "tarea", texto: "Limpiar filtro", puntos: 1 },
-  { tipo: "sabotaje", texto: "Apagar luces", efecto: "Perder turno" },
-  { tipo: "especial", texto: "Escanear en medbay", efecto: "Eliminar sabotaje" }
+  { tipo: "especial", texto: "Reparar sabotaje", efecto: "Eliminar sabotaje activo" }
 ];
 
 // Función para actualizar el estado del juego
 function actualizarEstado() {
-  status.textContent = `Tareas completadas: ${tareasCompletadas}/${maxTareas} | Turnos restantes: ${turnosRestantes}`;
+  status.textContent = `Tareas completadas: ${tareasCompletadas}/${maxTareas}`;
+  saboteos.textContent = `Sabotajes activos: ${sabotajesActivos}/${maxSabotajes}`;
   if (tareasCompletadas >= maxTareas) {
-    alert("¡Has ganado! Todas las tareas están completas.");
+    alert("¡Victoria! Has completado todas las tareas.");
+    reiniciarJuego();
+  } else if (saboteosActivos >= maxSabotajes) {
+    alert("¡Derrota! El impostor ha saboteado demasiado.");
     reiniciarJuego();
   } else if (turnosRestantes <= 0) {
-    alert("¡Perdiste! El impostor ha ganado.");
+    alert("¡Derrota! Te has quedado sin turnos.");
     reiniciarJuego();
   }
 }
@@ -47,18 +52,23 @@ function generarCartas() {
 function usarCarta(carta) {
   if (carta.tipo === "tarea") {
     tareasCompletadas += carta.puntos;
-  } else if (carta.tipo === "sabotaje") {
-    sabotajesActivos++;
-    alert(`¡Sabotaje activado! Efecto: ${carta.efecto}`);
   } else if (carta.tipo === "especial" && sabotajesActivos > 0) {
     sabotajesActivos--;
-    alert(`Has eliminado un sabotaje usando: ${carta.texto}`);
+    alert(`Has reparado un sabotaje usando: ${carta.texto}`);
   } else if (carta.tipo === "especial") {
-    alert("No hay sabotajes activos para eliminar.");
+    alert("No hay sabotajes activos para reparar.");
   }
   turnosRestantes--;
   actualizarEstado();
   generarCartas();
+}
+
+// Función para la acción del impostor
+function accionImpostor() {
+  if (Math.random() > 0.5 && sabotajesActivos < maxSabotajes) {
+    sabotajesActivos++;
+    alert("¡El impostor ha activado un sabotaje!");
+  }
 }
 
 // Función para reiniciar el juego
@@ -72,11 +82,8 @@ function reiniciarJuego() {
 
 // Botón de siguiente turno
 nextTurnButton.onclick = () => {
+  accionImpostor();
   turnosRestantes--;
-  if (Math.random() > 0.7) {
-    alert("El impostor ha jugado un sabotaje.");
-    sabotajesActivos++;
-  }
   actualizarEstado();
   generarCartas();
 };
