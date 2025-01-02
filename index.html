@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Juego de Cartas - Among Us</title>
+  <title>Among Us - Juego de Cartas</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      background-color: #20232a;
+      background-color: #1a1a1a;
       color: #61dafb;
     }
     .container {
@@ -30,20 +30,37 @@
     .card:hover {
       transform: scale(1.1);
     }
-    #status {
+    #status, #saboteos {
       margin: 20px 0;
       font-size: 1.2em;
+    }
+    #cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #61dafb;
+      border: none;
+      border-radius: 5px;
+      color: black;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #21a1f1;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Juego de Cartas - Among Us</h1>
-    <p>Completa las tareas antes de que el impostor te elimine.</p>
+    <h1>Among Us - Juego de Cartas</h1>
+    <p>Completa las tareas antes de que el impostor sabotee la nave.</p>
     <div id="status">Tareas completadas: 0/5</div>
-    <div id="cards">
-      <!-- Las cartas aparecerán aquí -->
-    </div>
+    <div id="saboteos">Sabotajes activos: 0/5</div>
+    <div id="cards"></div>
     <button id="next-turn">Siguiente Turno</button>
   </div>
   <script src="script.js"></script>
